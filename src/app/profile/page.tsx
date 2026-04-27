@@ -70,7 +70,7 @@ export default function ProfilePage() {
         }
 
         setRoutes(
-          data.map((r: SavedRouteData & { geometry?: unknown }) => ({
+          data.map((r: any) => ({
             id: r.id,
             name: r.name,
             total_distance: Number(r.total_distance),

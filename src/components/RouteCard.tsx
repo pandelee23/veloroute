@@ -10,7 +10,7 @@ export interface SavedRouteData {
   total_distance: number;
   elevation_gain: number;
   estimated_time: number;
-  created_at: string;
+  created_at: string | null;
   geojson?: {
     type: string;
     coordinates: [number, number][];
@@ -35,7 +35,8 @@ function formatTime(minutes: number) {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")} h`;
 }
 
-function formatDate(iso: string) {
+function formatDate(iso: string | null) {
+  if (!iso) return "Fecha desconocida";
   return new Date(iso).toLocaleDateString("es-ES", {
     day: "numeric",
     month: "long",
