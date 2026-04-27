@@ -23,6 +23,7 @@ export type Database = {
           id: string
           name: string
           total_distance: number
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -32,6 +33,7 @@ export type Database = {
           id?: string
           name: string
           total_distance: number
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -41,6 +43,7 @@ export type Database = {
           id?: string
           name?: string
           total_distance?: number
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -114,6 +117,15 @@ export type Database = {
       }
     }
     Functions: {
+      get_routes_geojson: {
+        Args: {
+          route_ids: string[]
+        }
+        Returns: {
+          id: string
+          geojson: string
+        }[]
+      }
       _postgis_deprecate: {
         Args: { newname: string; oldname: string; version: string }
         Returns: undefined

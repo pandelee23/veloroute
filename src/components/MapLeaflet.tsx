@@ -93,11 +93,11 @@ function ClimbLabelsLayer({
           transform: ${hovered ? "scale(1.05)" : "scale(1)"};
           transition: all .15s ease;
         ">
-          <span style="font-weight:700;color:${c.categoryColor};font-size:9px;text-transform:uppercase;letter-spacing:.5px">
+           <span style="font-weight:700;color:${c.categoryColor};font-size:9px;text-transform:uppercase;letter-spacing:.5px">
             ⛰ ${c.category}
           </span><br/>
           <span style="color:#1A1A1A;font-weight:600">${c.name}</span>
-          &nbsp;·&nbsp;${c.lengthKm}km&nbsp;·&nbsp;${c.avgSlopePct}%&nbsp;·&nbsp;<span style="color:#7C5CBA">APM ${c.apm}</span>
+          &nbsp;·&nbsp;${c.lengthKm}km&nbsp;·&nbsp;${c.avgSlopePct}%&nbsp;·&nbsp;<span style="color:#2D4B1D">APM ${c.apm}</span>
         </div>`;
       const icon = (hovered: boolean) =>
         L.divIcon({ html: badge(hovered), className: "", iconAnchor: [0, 0] });
@@ -121,10 +121,10 @@ function WaterFountainLayer({ fountains }: { fountains: WaterFountain[] }) {
     if (!fountains || fountains.length === 0) return;
     const markers: L.Marker[] = [];
     fountains.forEach((f) => {
-      const dropletSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="rgba(43,120,228,0.2)" stroke="#2B78E4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`;
+      const dropletSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="rgba(74,122,48,0.15)" stroke="#4A7A30" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>`;
       const iconHtml = `
         <div style="
-          background: white; border: 1.5px solid rgba(43,120,228,0.4);
+          background: white; border: 1.5px solid rgba(74,122,48,0.35);
           border-radius: 50%; width: 28px; height: 28px;
           display: flex; align-items: center; justify-content: center;
           box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;
@@ -141,7 +141,7 @@ function WaterFountainLayer({ fountains }: { fountains: WaterFountain[] }) {
         ">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
             ${dropletSvg}
-            <span style="font-weight:700;font-size:12px;color:#2B78E4">Fuente de agua</span>
+            <span style="font-weight:700;font-size:12px;color:#4A7A30">Fuente de agua</span>
           </div>
           <div style="color:#757575;font-size:10px">
             📍 Km ${f.distanceFromStart.toFixed(1)} desde el inicio
@@ -183,11 +183,11 @@ function MapEvents({ onMapClick }: { onMapClick: (lat: number, lng: number) => v
 // Legend data
 // ─────────────────────────────────────────────────────────────
 const SLOPE_LEGEND = [
-  { color: "#2B78E4", label: "Bajada",   range: "< 0 %"  },
+  { color: "#6B9E50", label: "Bajada",   range: "< 0 %"  },
   { color: "#4A7A30", label: "Llano",    range: "0–2 %"  },
   { color: "#C4A035", label: "Moderada", range: "2–6 %"  },
   { color: "#D96A27", label: "Dura",     range: "6–10 %" },
-  { color: "#C0392B", label: "Muro",     range: "> 10 %" },
+  { color: "#B5451B", label: "Muro",     range: "> 10 %" },
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -298,7 +298,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
             radius={idx === 0 ? 8 : idx === waypoints.length - 1 ? 8 : 4}
             pathOptions={{
               color:"#FFFFFF", weight:2,
-              fillColor: idx === 0 ? "#4A7A30" : idx === waypoints.length - 1 ? "#C0392B" : "#1A1A1A",
+              fillColor: idx === 0 ? "#4A7A30" : idx === waypoints.length - 1 ? "#D96A27" : "#1A1A1A",
               fillOpacity:1,
             }}
           />
@@ -401,7 +401,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
                       <span className="text-[#EAEAEA]">·</span>
                       <span style={{ color: getSlopeColor(c.avgSlopePct) }}>{c.avgSlopePct}%</span>
                       <span className="text-[#EAEAEA]">·</span>
-                      <span className="text-[#7C5CBA]">APM {c.apm}</span>
+                      <span className="text-[#2D4B1D]">APM {c.apm}</span>
                     </div>
                   </button>
                 ))}
@@ -413,7 +413,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
 
       {/* ── Fountain count pill ── */}
       {fountains.length > 0 && (
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-[#2B78E4]/20 px-3 py-1.5 rounded-full text-xs text-[#2B78E4] shadow-sm font-medium">
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-[#4A7A30]/20 px-3 py-1.5 rounded-full text-xs text-[#4A7A30] shadow-sm font-medium">
           <Droplets className="h-3.5 w-3.5" />
           {fountains.length} fuente{fountains.length !== 1 ? "s" : ""}
         </div>
@@ -460,16 +460,16 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
       )}
 
       <style>{`
-        .leaflet-container { background-color: #F3F0E8; }
+        .leaflet-container { background-color: #FAF8F5; }
         .leaflet-tooltip {
           background: white !important;
-          border: 1px solid #EAEAEA !important;
+          border: 1px solid #E1EDDA !important;
           color: #1A1A1A !important;
           font-size: 11px !important;
           border-radius: 10px !important;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
         }
-        .leaflet-tooltip-top::before { border-top-color: #EAEAEA !important; }
+        .leaflet-tooltip-top::before { border-top-color: #E1EDDA !important; }
         .water-fountain-popup .leaflet-popup-content-wrapper {
           background: transparent !important;
           box-shadow: none !important;

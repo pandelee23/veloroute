@@ -67,9 +67,9 @@ export function NutritionPanel({ stats, fountains, totalDistance }: NutritionPan
         {/* Water */}
         <div className="flex flex-col space-y-0.5">
           <span className="text-[10px] text-[#757575] flex items-center gap-1">
-            <Droplets className="h-3 w-3 text-[#2B78E4]" /> Agua
+            <Droplets className="h-3 w-3 text-[#4A7A30]" /> Agua
           </span>
-          <span className="text-lg font-bold text-[#2B78E4]">
+          <span className="text-lg font-bold text-[#4A7A30]">
             {totalWaterL}{" "}
             <span className="text-xs font-normal text-[#757575]">L</span>
           </span>

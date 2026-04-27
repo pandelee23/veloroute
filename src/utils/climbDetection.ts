@@ -23,11 +23,11 @@ export interface Climb {
 // ---------- internal helpers ----------
 
 function climbCategory(difficulty: number): { label: string; color: string } {
-  if (difficulty >= 64_000) return { label: "HC", color: "#dc2626" };        // red-600
-  if (difficulty >= 32_000) return { label: "Cat 1", color: "#ea580c" };      // orange-600
-  if (difficulty >= 16_000) return { label: "Cat 2", color: "#d97706" };      // amber-600
-  if (difficulty >= 8_000)  return { label: "Cat 3", color: "#16a34a" };      // green-600
-  return                          { label: "Cat 4", color: "#2563eb" };        // blue-600
+  if (difficulty >= 64_000) return { label: "HC", color: "#D96A27" };        // Brand Accent
+  if (difficulty >= 32_000) return { label: "Cat 1", color: "#1F3314" };      // Green-800
+  if (difficulty >= 16_000) return { label: "Cat 2", color: "#2D4B1D" };      // Green-700
+  if (difficulty >= 8_000)  return { label: "Cat 3", color: "#4A7A30" };      // Green-500
+  return                          { label: "Cat 4", color: "#6B9E50" };        // Green-400
 }
 
 function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {

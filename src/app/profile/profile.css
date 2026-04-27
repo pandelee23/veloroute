@@ -1,0 +1,334 @@
+/* ═════════════════════════════════════════════════════════════
+   Profile page — Komoot-inspired route list
+   ═════════════════════════════════════════════════════════════ */
+
+/* ── Search bar ────────────────────────────────────────────── */
+.profile-search {
+  position: relative;
+  width: 100%;
+}
+.profile-search__icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #757575;
+  pointer-events: none;
+}
+.profile-search__input {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  border: 1.5px solid #EAEAEA;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 15px;
+  color: #1A1A1A;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.profile-search__input::placeholder {
+  color: #BDBDBD;
+}
+.profile-search__input:focus {
+  border-color: var(--color-green-500);
+  box-shadow: 0 0 0 3px rgba(74, 122, 48, 0.08);
+}
+
+/* ── Filter pills ──────────────────────────────────────────── */
+.profile-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.profile-filters::-webkit-scrollbar {
+  display: none;
+}
+.profile-filter {
+  white-space: nowrap;
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1.5px solid #EAEAEA;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1A1A1A;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.profile-filter:hover {
+  background: #F9F7F2;
+  border-color: #D1D1D1;
+}
+.profile-filter--active {
+  background: var(--color-green-100);
+  border-color: var(--color-green-300);
+  color: var(--color-green-700);
+}
+
+/* ── Route card ────────────────────────────────────────────── */
+.route-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 20px 18px 18px;
+  background: #fff;
+  border-bottom: 1px solid #F0EFEA;
+  transition: background 0.15s ease;
+}
+.route-card:first-child {
+  border-radius: 14px 14px 0 0;
+}
+.route-card:last-child {
+  border-bottom: none;
+  border-radius: 0 0 14px 14px;
+}
+.route-card:only-child {
+  border-radius: 14px;
+}
+.route-card:hover {
+  background: #FDFCF9;
+}
+
+/* ── Mini‑map thumbnail ────────────────────────────────────── */
+.route-card__thumbnail {
+  flex-shrink: 0;
+  width: 120px;
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #F3F0E8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.route-card__thumbnail--empty {
+  background: #F3F0E8;
+}
+.route-card__minimap-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Content area ──────────────────────────────────────────── */
+.route-card__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.route-card__badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+  line-height: 1.6;
+  border: 1px solid transparent;
+  margin-bottom: 4px;
+}
+
+.route-card__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1A1A1A;
+  line-height: 1.35;
+  margin: 0 0 6px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.route-card__stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--color-green-500);
+  font-weight: 500;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.route-card__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.route-card__stat strong {
+  font-weight: 600;
+}
+.route-card__stat-sep {
+  color: #D1D1D1;
+  font-weight: 300;
+}
+
+.route-card__date {
+  font-size: 12px;
+  color: #757575;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── Action buttons ────────────────────────────────────────── */
+.route-card__actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.route-card__action-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #BDBDBD;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.route-card__action-btn:hover {
+  background: #F3F0E8;
+  color: #1A1A1A;
+}
+
+/* ── Dropdown menu ─────────────────────────────────────────── */
+.route-card__action-menu-wrapper {
+  position: relative;
+}
+.route-card__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+.route-card__dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background: #fff;
+  border: 1px solid #EAEAEA;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  min-width: 160px;
+  overflow: hidden;
+  animation: dropdown-in 0.15s ease;
+}
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.route-card__dropdown-item {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: #1A1A1A;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.12s ease;
+  text-align: left;
+}
+.route-card__dropdown-item:hover {
+  background: #F9F7F2;
+}
+.route-card__dropdown-item--danger {
+  color: #C0392B;
+}
+.route-card__dropdown-item--danger:hover {
+  background: #FFF0EF;
+}
+
+/* ── Route list wrapper ────────────────────────────────────── */
+.route-list {
+  border: 1.5px solid #EAEAEA;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Sort select ───────────────────────────────────────────── */
+.profile-sort-select {
+  padding: 7px 30px 7px 12px;
+  border-radius: 20px;
+  border: 1.5px solid #EAEAEA;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 10px center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1A1A1A;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  transition: border-color 0.15s ease;
+}
+.profile-sort-select:hover {
+  border-color: #D1D1D1;
+}
+.profile-sort-select:focus {
+  border-color: var(--color-green-500);
+}
+
+/* ── Empty state ───────────────────────────────────────────── */
+.profile-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 64px 24px;
+}
+.profile-empty__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #F3F0E8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.profile-empty__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin: 0 0 6px 0;
+}
+.profile-empty__text {
+  font-size: 14px;
+  color: #757575;
+  margin: 0 0 24px 0;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .route-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+  .route-card__thumbnail {
+    width: 100%;
+    height: 120px;
+  }
+  .route-card__actions {
+    align-self: flex-end;
+  }
+  .route-card__stats {
+    font-size: 12px;
+  }
+}

@@ -142,11 +142,11 @@ export function calculateDistanceSmoothedSlope(points: RoutePoint[], index: numb
  *   Red    (>10 %)  Wall
  */
 export function getSlopeColor(slope: number): string {
-  if (slope < 0)    return "#3b82f6"; // blue-500   — bajada
-  if (slope < 2.0)  return "#10b981"; // emerald-500 — llano (0–2%)
-  if (slope < 6.0)  return "#eab308"; // yellow-500  — moderada (2–6%)
-  if (slope < 10.0) return "#f97316"; // orange-500  — dura (6–10%)
-  return "#ef4444";                   // red-500     — muro (>10%)
+  if (slope < 0)    return "#6B9E50"; // green-400  — bajada
+  if (slope < 2.0)  return "#4A7A30"; // green-500  — llano (0–2%)
+  if (slope < 6.0)  return "#C4A035"; // olive-gold  — moderada (2–6%)
+  if (slope < 10.0) return "#D96A27"; // accent      — dura (6–10%)
+  return "#B5451B";                   // deep-accent  — muro (>10%)
 }
 
 /**

@@ -1,56 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/Auth/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import { RouteCard, SavedRouteData } from "@/components/RouteCard";
 import {
   Map,
   TrendingUp,
   Clock,
-  Calendar,
   Route,
   Loader2,
-  LogOut,
   Plus,
+  Search,
+  ArrowUpDown,
+  Bike,
 } from "lucide-react";
+import "./profile.css";
 
-interface SavedRoute {
-  id: string;
-  name: string;
-  total_distance: number;
-  elevation_gain: number;
-  estimated_time: number;
-  created_at: string;
-}
-
-function formatDistance(km: number) {
-  return km >= 1 ? `${km.toFixed(1)} km` : `${(km * 1000).toFixed(0)} m`;
-}
-
-function formatTime(minutes: number) {
-  const h = Math.floor(minutes / 60);
-  const m = Math.round(minutes % 60);
-  if (h === 0) return `${m} min`;
-  return `${h}h ${m}m`;
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
+type SortKey = "date" | "distance" | "elevation" | "time";
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [routes, setRoutes] = useState<SavedRoute[]>([]);
+  const [routes, setRoutes] = useState<SavedRouteData[]>([]);
   const [loadingRoutes, setLoadingRoutes] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>("date");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -65,12 +44,42 @@ export default function ProfilePage() {
       setLoadingRoutes(true);
       const { data, error } = await supabase
         .from("routes")
-        .select("id, name, total_distance, elevation_gain, estimated_time, created_at")
+        .select("id, name, total_distance, elevation_gain, estimated_time, created_at, geometry, user_id")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (!error && data) {
-        setRoutes(data as SavedRoute[]);
+        // We need to fetch geometry as GeoJSON separately since the PostGIS column
+        // comes as WKB by default. Use a separate RPC or raw SQL.
+        const routeIds = data.map((r: { id: string }) => r.id);
+        
+        let geojsonMap: Record<string, { type: string; coordinates: [number, number][] }> = {};
+        
+        if (routeIds.length > 0) {
+          const { data: geoData } = await supabase.rpc("get_routes_geojson", {
+            route_ids: routeIds,
+          }).select();
+
+          if (geoData && Array.isArray(geoData)) {
+            geoData.forEach((g: { id: string; geojson: string }) => {
+              try {
+                geojsonMap[g.id] = JSON.parse(g.geojson);
+              } catch { /* skip invalid */ }
+            });
+          }
+        }
+
+        setRoutes(
+          data.map((r: SavedRouteData & { geometry?: unknown }) => ({
+            id: r.id,
+            name: r.name,
+            total_distance: Number(r.total_distance),
+            elevation_gain: Number(r.elevation_gain),
+            estimated_time: Number(r.estimated_time),
+            created_at: r.created_at,
+            geojson: geojsonMap[r.id] || null,
+          }))
+        );
       }
       setLoadingRoutes(false);
     };
@@ -85,10 +94,77 @@ export default function ProfilePage() {
     }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
+  const handleExportGPX = (route: SavedRouteData) => {
+    if (!route.geojson?.coordinates || route.geojson.coordinates.length < 2) {
+      alert("Esta ruta no tiene datos de geometría para exportar.");
+      return;
+    }
+
+    const trackPoints = route.geojson.coordinates
+      .map(([lng, lat]) => `      <trkpt lat="${lat}" lon="${lng}"></trkpt>`)
+      .join("\n");
+
+    const gpx = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="VeloRoute Pro">
+  <trk>
+    <name>${route.name}</name>
+    <trkseg>
+${trackPoints}
+    </trkseg>
+  </trk>
+</gpx>`;
+
+    const blob = new Blob([gpx], { type: "application/gpx+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${route.name.replace(/\s+/g, "_")}.gpx`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
+
+  // ── Filtering & Sorting ──────────────────────────────────
+  const filtered = useMemo(() => {
+    let result = routes;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter((r) => r.name.toLowerCase().includes(q));
+    }
+
+    const sorted = [...result];
+    switch (sortBy) {
+      case "date":
+        sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+      case "distance":
+        sorted.sort((a, b) => b.total_distance - a.total_distance);
+        break;
+      case "elevation":
+        sorted.sort((a, b) => b.elevation_gain - a.elevation_gain);
+        break;
+      case "time":
+        sorted.sort((a, b) => b.estimated_time - a.estimated_time);
+        break;
+    }
+
+    return sorted;
+  }, [routes, searchQuery, sortBy]);
+
+  // ── Quick stats ──────────────────────────────────────────
+  const totalDist = routes.reduce((a, r) => a + r.total_distance, 0);
+  const totalElev = routes.reduce((a, r) => a + r.elevation_gain, 0);
+  const totalTime = routes.reduce((a, r) => a + r.estimated_time, 0);
+
+  function formatDistance(km: number) {
+    return km >= 1 ? `${km.toFixed(1)} km` : `${(km * 1000).toFixed(0)} m`;
+  }
+  function formatTime(minutes: number) {
+    const h = Math.floor(minutes / 60);
+    const m = Math.round(minutes % 60);
+    if (h === 0) return `${m} min`;
+    return `${h}h ${m}m`;
+  }
 
   if (authLoading) {
     return (
@@ -105,82 +181,96 @@ export default function ProfilePage() {
       <Navbar />
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-10">
-        {/* Header del perfil */}
-        <div className="flex items-start justify-between mb-10">
+        {/* ── Header ──────────────────────────────────────── */}
+        <div className="flex items-start justify-between mb-2">
           <div>
-            <div className="w-14 h-14 rounded-full bg-[#4A7A30] flex items-center justify-center text-white text-xl font-bold mb-3 shadow-sm">
-              {user.email?.[0].toUpperCase()}
-            </div>
-            <h1 className="text-2xl font-bold text-[#1A1A1A]">Mi Perfil</h1>
-            <p className="text-[#757575] text-sm mt-0.5">{user.email}</p>
+            <h1 className="text-3xl font-bold text-[#1A1A1A] tracking-tight">
+              Rutas guardadas
+            </h1>
           </div>
-          <div className="flex space-x-2">
-            <Link href="/planner">
-              <Button size="sm" className="bg-[#4A7A30] hover:bg-[#3A6025] text-white rounded-full">
-                <Plus className="w-4 h-4 mr-1.5" />
-                Nueva ruta
-              </Button>
-            </Link>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-              className="text-[#757575] border-[#EAEAEA] hover:bg-[#EAEAEA] rounded-full"
-            >
-              <LogOut className="w-4 h-4 mr-1.5" />
-              Salir
+          <Link href="/planner">
+            <Button className="bg-[#D96A27] hover:bg-[#C55E20] text-white rounded-full px-5 py-2.5 font-semibold text-sm shadow-sm">
+              <Plus className="w-4 h-4 mr-1.5" />
+              Nueva ruta
             </Button>
+          </Link>
+        </div>
+
+        <p className="text-[#757575] text-sm mb-6">
+          {routes.length} {routes.length === 1 ? "Tour" : "Tours"}
+        </p>
+
+        {/* ── Quick stats strip ───────────────────────────── */}
+        {routes.length > 0 && (
+          <div className="flex items-center gap-6 mb-6 text-sm">
+            <span className="flex items-center gap-1.5 text-[#757575]">
+              <Route className="w-4 h-4 text-[#4A7A30]" />
+              <strong className="text-[#1A1A1A]">{routes.length}</strong> rutas
+            </span>
+            <span className="flex items-center gap-1.5 text-[#757575]">
+              <Map className="w-4 h-4 text-[#4A7A30]" />
+              <strong className="text-[#1A1A1A]">{formatDistance(totalDist)}</strong>
+            </span>
+            <span className="flex items-center gap-1.5 text-[#757575]">
+              <TrendingUp className="w-4 h-4 text-[#4A7A30]" />
+              <strong className="text-[#1A1A1A]">{totalElev.toFixed(0)} m</strong>
+            </span>
+            <span className="flex items-center gap-1.5 text-[#757575]">
+              <Clock className="w-4 h-4 text-[#4A7A30]" />
+              <strong className="text-[#1A1A1A]">{formatTime(totalTime)}</strong>
+            </span>
           </div>
+        )}
+
+        {/* ── Search bar ──────────────────────────────────── */}
+        <div className="profile-search mb-4">
+          <Search className="profile-search__icon w-5 h-5" />
+          <input
+            type="text"
+            className="profile-search__input"
+            placeholder="Buscar por nombre de la ruta"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
 
-        {/* Estadísticas rápidas */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            {
-              icon: Route,
-              label: "Rutas guardadas",
-              value: routes.length,
-            },
-            {
-              icon: Map,
-              label: "Distancia total",
-              value: formatDistance(routes.reduce((a, r) => a + r.total_distance, 0)),
-            },
-            {
-              icon: TrendingUp,
-              label: "Desnivel total",
-              value: `${routes.reduce((a, r) => a + r.elevation_gain, 0).toFixed(0)} m`,
-            },
-            {
-              icon: Clock,
-              label: "Tiempo total",
-              value: formatTime(routes.reduce((a, r) => a + r.estimated_time, 0)),
-            },
-          ].map(({ icon: Icon, label, value }) => (
-            <div
-              key={label}
-              className="bg-white rounded-2xl border border-[#EAEAEA] p-5 shadow-sm flex flex-col items-center text-center"
-            >
-              <Icon className="w-6 h-6 text-[#4A7A30] mb-2" />
-              <span className="text-2xl font-bold text-[#1A1A1A]">{value}</span>
-              <span className="text-xs text-[#757575] mt-0.5">{label}</span>
-            </div>
-          ))}
+        {/* ── Filter & sort bar ───────────────────────────── */}
+        <div className="profile-filters mb-6">
+          <button className="profile-filter profile-filter--active">
+            <Bike className="w-3.5 h-3.5" />
+            Ciclismo
+          </button>
+          <select
+            className="profile-sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as SortKey)}
+          >
+            <option value="date">Fecha</option>
+            <option value="distance">Distancia</option>
+            <option value="elevation">Desnivel</option>
+            <option value="time">Duración</option>
+          </select>
+          <button className="profile-filter">
+            <ArrowUpDown className="w-3.5 h-3.5" />
+            Distancia/duración
+          </button>
+          <button className="profile-filter">Desnivel</button>
+          <button className="profile-filter">Dificultad</button>
         </div>
 
-        {/* Lista de rutas */}
-        <div>
-          <h2 className="text-lg font-semibold text-[#1A1A1A] mb-4">Mis rutas</h2>
-
-          {loadingRoutes ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-6 h-6 text-[#4A7A30] animate-spin" />
-            </div>
-          ) : routes.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-[#EAEAEA] shadow-sm p-12 flex flex-col items-center text-center">
-              <Map className="w-12 h-12 text-[#BDBDBD] mb-4" />
-              <p className="text-lg font-medium text-[#1A1A1A] mb-1">No tienes rutas guardadas aún</p>
-              <p className="text-sm text-[#757575] mb-6">
+        {/* ── Route list ──────────────────────────────────── */}
+        {loadingRoutes ? (
+          <div className="flex justify-center py-16">
+            <Loader2 className="w-7 h-7 text-[#4A7A30] animate-spin" />
+          </div>
+        ) : filtered.length === 0 && routes.length === 0 ? (
+          <div className="route-list">
+            <div className="profile-empty">
+              <div className="profile-empty__icon">
+                <Map className="w-7 h-7 text-[#BDBDBD]" />
+              </div>
+              <p className="profile-empty__title">No tienes rutas guardadas aún</p>
+              <p className="profile-empty__text">
                 Crea tu primera ruta en el planificador y guárdala aquí.
               </p>
               <Link href="/planner">
@@ -189,52 +279,31 @@ export default function ProfilePage() {
                 </Button>
               </Link>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {routes.map((route) => (
-                <div
-                  key={route.id}
-                  className="bg-white rounded-2xl border border-[#EAEAEA] shadow-sm p-5 flex items-center justify-between hover:border-[#4A7A30] transition-colors group"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 rounded-full bg-[#F9F7F2] flex items-center justify-center group-hover:bg-[#EBF4E3] transition-colors">
-                      <Route className="w-5 h-5 text-[#4A7A30]" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-[#1A1A1A]">{route.name}</p>
-                      <div className="flex items-center space-x-3 text-xs text-[#757575] mt-0.5">
-                        <span className="flex items-center gap-1">
-                          <Map className="w-3 h-3" />
-                          {formatDistance(route.total_distance)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <TrendingUp className="w-3 h-3" />
-                          {route.elevation_gain.toFixed(0)} m
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {formatTime(route.estimated_time)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {formatDate(route.created_at)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteRoute(route.id)}
-                    className="text-[#BDBDBD] hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                  >
-                    Eliminar
-                  </Button>
-                </div>
-              ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="route-list">
+            <div className="profile-empty">
+              <div className="profile-empty__icon">
+                <Search className="w-6 h-6 text-[#BDBDBD]" />
+              </div>
+              <p className="profile-empty__title">Sin resultados</p>
+              <p className="profile-empty__text">
+                No se encontraron rutas que coincidan con &quot;{searchQuery}&quot;
+              </p>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="route-list">
+            {filtered.map((route) => (
+              <RouteCard
+                key={route.id}
+                route={route}
+                onDelete={handleDeleteRoute}
+                onExportGPX={handleExportGPX}
+              />
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

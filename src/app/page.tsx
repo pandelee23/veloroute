@@ -30,25 +30,25 @@ export default function LandingPage() {
             </Button>
           </Link>
           <Link href="/register">
-            <Button variant="outline" size="lg" className="w-full sm:w-auto border-[#EAEAEA] text-[#1A1A1A] hover:bg-[#F9F7F2] rounded-full px-8 py-6 text-lg">
+            <Button variant="outline" size="lg" className="w-full sm:w-auto border-[#E1EDDA] text-[#1A1A1A] hover:bg-[#FAF8F5] rounded-full px-8 py-6 text-lg">
               Crear cuenta gratis
             </Button>
           </Link>
         </div>
 
         <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto px-4">
-          <div className="flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-[#EAEAEA]">
+          <div className="flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-[#E1EDDA]">
             <TrendingUp className="w-10 h-10 text-[#4A7A30] mb-4" />
             <h3 className="text-xl font-semibold mb-2">Altimetría Precisa</h3>
             <p className="text-[#757575] text-sm">Visualiza el perfil de elevación y los puertos de montaña de tu ruta antes de salir de casa.</p>
           </div>
-          <div className="flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-[#EAEAEA]">
-            <Droplets className="w-10 h-10 text-[#4A7A30] mb-4" />
+          <div className="flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-[#E1EDDA]">
+            <Droplets className="w-10 h-10 text-[#6B9E50] mb-4" />
             <h3 className="text-xl font-semibold mb-2">Puntos de Agua</h3>
             <p className="text-[#757575] text-sm">Encuentra fuentes de agua a lo largo de tu recorrido gracias a la integración con Overpass.</p>
           </div>
-          <div className="flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-[#EAEAEA]">
-            <Map className="w-10 h-10 text-[#4A7A30] mb-4" />
+          <div className="flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-[#E1EDDA]">
+            <Map className="w-10 h-10 text-[#94BE7A] mb-4" />
             <h3 className="text-xl font-semibold mb-2">Guarda tus Rutas</h3>
             <p className="text-[#757575] text-sm">Crea una cuenta para almacenar tus rutas favoritas y consultarlas cuando quieras.</p>
           </div>

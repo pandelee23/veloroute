@@ -83,7 +83,7 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="tu@correo.com"
-                className="w-full px-4 py-2.5 rounded-lg border border-[#EAEAEA] bg-[#F9F7F2] text-[#1A1A1A] text-sm focus:outline-none focus:ring-2 focus:ring-[#4A7A30] focus:border-transparent transition-all placeholder:text-[#BDBDBD]"
+                className="w-full px-4 py-2.5 rounded-lg border border-[#EAEAEA] bg-[#FAF8F5] text-[#1A1A1A] text-sm focus:outline-none focus:ring-2 focus:ring-[#4A7A30] focus:border-transparent transition-all placeholder:text-[#BDBDBD]"
               />
             </div>
 

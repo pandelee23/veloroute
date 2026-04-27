@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload as RoutePoint;
     return (
-      <div className="bg-white text-[#1A1A1A] border border-[#EAEAEA] p-2.5 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)] text-xs">
+      <div className="bg-white text-[#1A1A1A] border border-[#E1EDDA] p-2.5 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)] text-xs">
         <p className="font-semibold mb-1">Distancia: {data.distance.toFixed(1)} km</p>
         <p className="text-[#4A7A30] font-medium">Altitud: {data.elevation.toFixed(0)} m</p>
         <p className="text-[#757575] capitalize">Terreno: {data.surface}</p>
@@ -35,7 +35,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export function ProfileChart({ routePoints, onHover }: ProfileChartProps) {
   if (!routePoints || routePoints.length === 0) {
     return (
-      <div className="w-full h-48 bg-white flex items-center justify-center text-[#757575] border-t border-[#EAEAEA] flex-shrink-0 z-10">
+      <div className="w-full h-48 bg-white flex items-center justify-center text-[#757575] border-t border-[#E1EDDA] flex-shrink-0 z-10">
         Comienza a trazar una ruta para ver el perfil de elevación
       </div>
     );
@@ -47,7 +47,7 @@ export function ProfileChart({ routePoints, onHover }: ProfileChartProps) {
   const yDomain = [Math.max(0, Math.floor(minElev - 50)), Math.ceil(maxElev + 50)];
 
   return (
-    <div className="w-full h-48 bg-white p-4 border-t border-[#EAEAEA] z-10 flex-shrink-0">
+    <div className="w-full h-48 bg-white p-4 border-t border-[#E1EDDA] z-10 flex-shrink-0">
       <h3 className="text-[#1A1A1A] text-sm font-semibold mb-2">Perfil de Elevación</h3>
       <div className="w-full h-32">
         <ResponsiveContainer width="100%" height="100%">
@@ -65,22 +65,22 @@ export function ProfileChart({ routePoints, onHover }: ProfileChartProps) {
           >
             <defs>
               <linearGradient id="colorElevation" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#4A7A30" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="#4A7A30" stopOpacity={0.02} />
+                <stop offset="5%" stopColor="#4A7A30" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#4A7A30" stopOpacity={0.0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#EAEAEA" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E1EDDA" vertical={false} />
             <XAxis 
               dataKey="distance" 
               tick={{ fill: "#757575", fontSize: 10 }}
               tickFormatter={(val) => `${val.toFixed(1)}km`}
-              stroke="#EAEAEA"
+              stroke="#E1EDDA"
             />
             <YAxis 
               domain={yDomain} 
               tick={{ fill: "#757575", fontSize: 10 }}
               tickFormatter={(val) => `${val}m`}
-              stroke="#EAEAEA"
+              stroke="#E1EDDA"
             />
             <Tooltip content={<CustomTooltip />} />
             <Area
