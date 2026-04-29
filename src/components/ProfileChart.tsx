@@ -47,7 +47,7 @@ export function ProfileChart({ routePoints, onHover }: ProfileChartProps) {
   const yDomain = [Math.max(0, Math.floor(minElev - 50)), Math.ceil(maxElev + 50)];
 
   return (
-    <div className="w-full h-48 bg-white p-4 border-t border-[#E1EDDA] z-10 flex-shrink-0">
+    <div className="w-full h-40 sm:h-48 bg-white p-4 border-t border-[#E1EDDA] z-10 flex-shrink-0">
       <h3 className="text-[#1A1A1A] text-sm font-semibold mb-2">Perfil de Elevación</h3>
       <div className="w-full h-32">
         <ResponsiveContainer width="100%" height="100%">

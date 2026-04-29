@@ -25,7 +25,7 @@ export function DataPanel({ stats, fountains }: DataPanelProps) {
   const timeString = `${hours > 0 ? `${hours}h ` : ""}${minutes}m`;
 
   return (
-    <Card className="w-80 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-[#E1EDDA] ring-0 text-[#1A1A1A]">
+    <Card className="w-[calc(100vw-32px)] sm:w-80 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-[#E1EDDA] ring-0 text-[#1A1A1A]">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-bold flex items-center justify-between">
           <span>Estadísticas</span>

@@ -182,16 +182,17 @@ ${trackPoints}
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-10">
         {/* ── Header ──────────────────────────────────────── */}
-        <div className="flex items-start justify-between mb-2">
+        <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="text-3xl font-bold text-[#1A1A1A] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
               Rutas guardadas
             </h1>
           </div>
           <Link href="/planner">
-            <Button className="bg-[#D96A27] hover:bg-[#C55E20] text-white rounded-full px-5 py-2.5 font-semibold text-sm shadow-sm">
-              <Plus className="w-4 h-4 mr-1.5" />
-              Nueva ruta
+            <Button className="bg-[#D96A27] hover:bg-[#C55E20] text-white rounded-full px-4 sm:px-5 py-2 sm:py-2.5 font-semibold text-xs sm:text-sm shadow-sm">
+              <Plus className="w-4 h-4 mr-1 sm:mr-1.5" />
+              <span className="hidden sm:inline">Nueva ruta</span>
+              <span className="sm:hidden">Nueva</span>
             </Button>
           </Link>
         </div>
@@ -202,20 +203,20 @@ ${trackPoints}
 
         {/* ── Quick stats strip ───────────────────────────── */}
         {routes.length > 0 && (
-          <div className="flex items-center gap-6 mb-6 text-sm">
-            <span className="flex items-center gap-1.5 text-[#757575]">
+          <div className="flex items-center gap-6 mb-6 text-sm overflow-x-auto pb-2 scrollbar-hide">
+            <span className="flex items-center gap-1.5 text-[#757575] shrink-0">
               <Route className="w-4 h-4 text-[#4A7A30]" />
               <strong className="text-[#1A1A1A]">{routes.length}</strong> rutas
             </span>
-            <span className="flex items-center gap-1.5 text-[#757575]">
+            <span className="flex items-center gap-1.5 text-[#757575] shrink-0">
               <Map className="w-4 h-4 text-[#4A7A30]" />
               <strong className="text-[#1A1A1A]">{formatDistance(totalDist)}</strong>
             </span>
-            <span className="flex items-center gap-1.5 text-[#757575]">
+            <span className="flex items-center gap-1.5 text-[#757575] shrink-0">
               <TrendingUp className="w-4 h-4 text-[#4A7A30]" />
               <strong className="text-[#1A1A1A]">{totalElev.toFixed(0)} m</strong>
             </span>
-            <span className="flex items-center gap-1.5 text-[#757575]">
+            <span className="flex items-center gap-1.5 text-[#757575] shrink-0">
               <Clock className="w-4 h-4 text-[#4A7A30]" />
               <strong className="text-[#1A1A1A]">{formatTime(totalTime)}</strong>
             </span>
@@ -235,13 +236,13 @@ ${trackPoints}
         </div>
 
         {/* ── Filter & sort bar ───────────────────────────── */}
-        <div className="profile-filters mb-6">
-          <button className="profile-filter profile-filter--active">
+        <div className="profile-filters mb-6 overflow-x-auto pb-2 scrollbar-hide">
+          <button className="profile-filter profile-filter--active shrink-0">
             <Bike className="w-3.5 h-3.5" />
             Ciclismo
           </button>
           <select
-            className="profile-sort-select"
+            className="profile-sort-select shrink-0"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortKey)}
           >
@@ -250,12 +251,12 @@ ${trackPoints}
             <option value="elevation">Desnivel</option>
             <option value="time">Duración</option>
           </select>
-          <button className="profile-filter">
+          <button className="profile-filter shrink-0">
             <ArrowUpDown className="w-3.5 h-3.5" />
             Distancia/duración
           </button>
-          <button className="profile-filter">Desnivel</button>
-          <button className="profile-filter">Dificultad</button>
+          <button className="profile-filter shrink-0">Desnivel</button>
+          <button className="profile-filter shrink-0">Dificultad</button>
         </div>
 
         {/* ── Route list ──────────────────────────────────── */}

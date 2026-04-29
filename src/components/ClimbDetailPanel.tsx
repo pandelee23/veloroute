@@ -70,7 +70,7 @@ export function ClimbDetailPanel({ climb, routePoints, onClose }: ClimbDetailPan
 
   return (
     // Outer: full-height column on the right, aligned to top
-    <div className="absolute top-0 right-0 bottom-0 z-30 pointer-events-none flex flex-col justify-start pt-3 pr-3" style={{ width: 330 }}>
+    <div className="absolute top-0 right-0 bottom-0 z-30 pointer-events-none flex flex-col justify-start pt-3 px-3 sm:pr-3" style={{ width: "min(330px, 100vw)" }}>
       <div
         className="pointer-events-auto rounded-2xl overflow-hidden flex flex-col shadow-[0_8px_32px_rgba(0,0,0,0.10)]"
         style={{

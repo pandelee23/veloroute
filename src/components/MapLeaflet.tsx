@@ -322,31 +322,31 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
         )}
       </MapContainer>
 
-      {/* ── Top-right info pill ── */}
-      <div className="absolute top-4 right-4 z-10 text-xs text-[#1A1A1A] bg-white/90 px-3 py-1.5 rounded-full backdrop-blur-sm border border-[#EAEAEA] shadow-sm">
+      {/* ── Top info pill ── */}
+      <div className="absolute top-[72px] right-4 z-10 text-[10px] sm:text-xs text-[#1A1A1A] bg-white/90 px-3 py-1.5 rounded-full backdrop-blur-sm border border-[#EAEAEA] shadow-sm">
         Haz clic en el mapa para trazar · Puntos: {waypoints.length}
       </div>
 
       {/* ── Loading ── */}
       {loading && (
-        <div className="absolute top-14 right-4 z-10 text-xs text-white bg-[#4A7A30] px-3 py-1.5 rounded-full animate-pulse shadow-md">
+        <div className="absolute top-[108px] right-4 z-10 text-[10px] sm:text-xs text-white bg-[#4A7A30] px-3 py-1.5 rounded-full animate-pulse shadow-md">
           Calculando ruta…
         </div>
       )}
 
       {/* ── Action buttons ── */}
       {waypoints.length > 0 && !loading && (
-        <div className="absolute top-14 right-4 z-10 flex gap-2">
+        <div className="absolute top-[108px] right-4 z-10 flex gap-2">
           {waypoints.length > 1 && (
             <button onClick={handleUndo}
-              className="text-xs bg-white hover:bg-[#F3F0E8] text-[#1A1A1A] px-3 py-1.5 rounded-full transition-colors shadow-sm cursor-pointer border border-[#EAEAEA]"
+              className="text-[10px] sm:text-xs bg-white hover:bg-[#F3F0E8] text-[#1A1A1A] px-3 py-1.5 rounded-full transition-colors shadow-sm cursor-pointer border border-[#EAEAEA]"
               title="Deshacer último punto"
             >
               ↩ Deshacer
             </button>
           )}
           <button onClick={handleClear}
-            className="text-xs bg-[#C0392B] hover:bg-[#A93226] text-white px-3 py-1.5 rounded-full transition-colors shadow-sm cursor-pointer"
+            className="text-[10px] sm:text-xs bg-[#C0392B] hover:bg-[#A93226] text-white px-3 py-1.5 rounded-full transition-colors shadow-sm cursor-pointer"
           >
             Borrar Ruta
           </button>
@@ -413,7 +413,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
 
       {/* ── Fountain count pill ── */}
       {fountains.length > 0 && (
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-[#4A7A30]/20 px-3 py-1.5 rounded-full text-xs text-[#4A7A30] shadow-sm font-medium">
+        <div className="absolute top-[72px] left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-[#4A7A30]/20 px-3 py-1.5 rounded-full text-[10px] sm:text-xs text-[#4A7A30] shadow-sm font-medium">
           <Droplets className="h-3.5 w-3.5" />
           {fountains.length} fuente{fountains.length !== 1 ? "s" : ""}
         </div>
@@ -421,7 +421,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
 
       {/* ── Slope + Surface legend ── */}
       {routeLine.length > 1 && (
-        <div className="absolute bottom-6 left-4 z-10 bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl px-3 py-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.05)]" style={{ minWidth: 130 }}>
+        <div className="absolute bottom-4 sm:bottom-6 left-4 z-10 bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl px-3 py-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.05)]" style={{ minWidth: 130 }}>
           <p className="text-[9px] font-bold tracking-widest uppercase text-[#757575] mb-1.5">Pendiente</p>
           <div className="flex flex-col gap-[3px]">
             {SLOPE_LEGEND.map(({ color, label, range }) => (

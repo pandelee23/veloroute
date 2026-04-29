@@ -1,0 +1,5 @@
+<USER_REQUEST>
+no se veningun fondo topografico. usa este codigo css de patron topograficopara ponerlo de fondo en la pagina de inicio solo, no quiero que cambies nada mas que el background de la pagina de inicio:
+
+background-color: #ffffff;
+<truncated 92503 bytes>

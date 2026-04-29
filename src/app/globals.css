@@ -128,4 +128,17 @@
   .transition-brand {
     transition: all 0.2s ease;
   }
+  .topo-pattern {
+    background-color: #ffffff;
+    background-image: url('/topo.svg');
+    background-attachment: fixed;
+    background-size: 600px 600px;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

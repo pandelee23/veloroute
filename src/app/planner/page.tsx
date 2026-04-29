@@ -22,6 +22,8 @@ export default function Home() {
   const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null);
   const [climbs, setClimbs] = useState<Climb[]>([]);
   const [fountains, setFountains] = useState<WaterFountain[]>([]);
+  const [showDataPanel, setShowDataPanel] = useState(true);
+  const [showProfile, setShowProfile] = useState(true);
 
   // Calculate dynamic stats based on route points from OSRM
   const currentStats: RouteStats = {
@@ -59,16 +61,36 @@ export default function Home() {
           hoveredPointIndex={hoveredPointIndex} 
         />
         
-        {/* Panel lateral superpuesto */}
-        <div className="absolute top-4 left-4 z-20 pointer-events-none">
-          <div className="pointer-events-auto">
-            <DataPanel stats={currentStats} fountains={fountains} />
-          </div>
+        {/* Panel lateral superpuesto - Toggleable on mobile */}
+        <div className={`absolute top-4 left-4 z-20 transition-all duration-300 ${showDataPanel ? 'translate-x-0 opacity-100' : '-translate-x-[calc(100%+16px)] opacity-0'}`}>
+          <DataPanel stats={currentStats} fountains={fountains} />
+        </div>
+
+        {/* Controls toggles (only visible/useful on mobile or for cleaning view) */}
+        <div className="absolute top-4 right-4 z-20 flex flex-col space-y-2">
+          <button 
+            onClick={() => setShowDataPanel(!showDataPanel)}
+            className="bg-white/90 backdrop-blur-sm p-2.5 rounded-full shadow-lg border border-[#E1EDDA] text-[#4A7A30] hover:bg-white transition-all"
+            title={showDataPanel ? "Ocultar estadísticas" : "Mostrar estadísticas"}
+          >
+            <div className={`transition-transform duration-300 ${showDataPanel ? 'rotate-180' : 'rotate-0'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </div>
+          </button>
+          <button 
+            onClick={() => setShowProfile(!showProfile)}
+            className="bg-white/90 backdrop-blur-sm p-2.5 rounded-full shadow-lg border border-[#E1EDDA] text-[#4A7A30] hover:bg-white transition-all"
+            title={showProfile ? "Ocultar perfil" : "Mostrar perfil"}
+          >
+            <div className={`transition-transform duration-300 ${showProfile ? 'rotate-180' : 'rotate-0'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </button>
         </div>
       </div>
 
-      {/* Gráfico de perfil anclado abajo */}
-      <div className="z-20">
+      {/* Gráfico de perfil anclado abajo - Toggleable */}
+      <div className={`z-20 transition-all duration-300 ${showProfile ? 'h-auto opacity-100' : 'h-0 opacity-0 overflow-hidden'}`}>
         <ProfileChart 
           routePoints={routePoints} 
           onHover={setHoveredPointIndex}
