@@ -68,15 +68,17 @@ export function SaveRouteButton({ routePoints, stats }: SaveRouteButtonProps) {
       }`}
     >
       {saving ? (
-        <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+        <Loader2 className="sm:mr-1.5 h-4 w-4 animate-spin" />
       ) : success ? (
-        <Check className="mr-1.5 h-4 w-4" />
+        <Check className="sm:mr-1.5 h-4 w-4" />
       ) : !user ? (
-        <LogIn className="mr-1.5 h-4 w-4" />
+        <LogIn className="sm:mr-1.5 h-4 w-4" />
       ) : (
-        <Save className="mr-1.5 h-4 w-4" />
+        <Save className="sm:mr-1.5 h-4 w-4" />
       )}
-      {success ? "Guardado" : !user ? "Inicia sesión" : "Guardar"}
+      <span className="hidden sm:inline">
+        {success ? "Guardado" : !user ? "Inicia sesión" : "Guardar"}
+      </span>
     </Button>
   );
 }

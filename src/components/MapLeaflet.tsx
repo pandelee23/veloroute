@@ -12,13 +12,15 @@ import { smoothElevations, calculateSlope, getSlopeColor, getSurfaceStyle, calcu
 import { detectClimbs, Climb } from "@/utils/climbDetection";
 import { ClimbDetailPanel } from "@/components/ClimbDetailPanel";
 import { fetchDrinkingWaterNearRoute, WaterFountain } from "@/services/overpassService";
-import { Mountain, Droplets, ChevronDown, ChevronUp } from "lucide-react";
+import { Mountain, Droplets, ChevronDown, ChevronUp, Undo2, Trash2, Info } from "lucide-react";
 
 interface MapLeafletProps {
   onRouteUpdate: (points: RoutePoint[]) => void;
   onClimbsDetected?: (climbs: Climb[]) => void;
   onFountainsLoaded?: (fountains: WaterFountain[]) => void;
   hoveredPointIndex?: number | null;
+  initialWaypoints?: [number, number][];
+  onWaypointsChange?: (waypoints: [number, number][]) => void;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -193,7 +195,7 @@ const SLOPE_LEGEND = [
 // ─────────────────────────────────────────────────────────────
 // Main component
 // ─────────────────────────────────────────────────────────────
-export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountainsLoaded, hoveredPointIndex }: MapLeafletProps) {
+export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountainsLoaded, hoveredPointIndex, initialWaypoints, onWaypointsChange }: MapLeafletProps) {
   const [waypoints, setWaypoints]     = useState<[number, number][]>([]);
   const [routeLine, setRouteLine]     = useState<RoutePoint[]>([]);
   const [climbs, setClimbs]           = useState<Climb[]>([]);
@@ -202,7 +204,8 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
   const [hoveredClimb, setHoveredClimb] = useState<Climb | null>(null);
   const [selectedClimb, setSelectedClimb] = useState<Climb | null>(null);
   const [flyToClimb, setFlyToClimb]   = useState<Climb | null>(null);
-  const [climbListOpen, setClimbListOpen] = useState(true);
+  const [climbListOpen, setClimbListOpen] = useState(false);
+  const [legendOpen, setLegendOpen] = useState(false);
 
   const updateClimbs = useCallback((points: RoutePoint[]) => {
     const detected = detectClimbs(points);
@@ -220,6 +223,32 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
       onFountainsLoaded?.([]);
     }
   }, [onFountainsLoaded]);
+
+  // Report waypoints changes to parent
+  useEffect(() => {
+    onWaypointsChange?.(waypoints);
+  }, [waypoints, onWaypointsChange]);
+
+  // Load initial waypoints
+  useEffect(() => {
+    if (initialWaypoints && initialWaypoints.length > 0 && waypoints.length === 0) {
+      setWaypoints(initialWaypoints);
+      if (initialWaypoints.length >= 2) {
+        setLoading(true);
+        getOsrmRoute(initialWaypoints).then(points => {
+          setLoading(false);
+          if (points) {
+            setRouteLine(points); onRouteUpdate(points);
+            updateClimbs(points); loadFountains(points);
+          }
+        });
+      } else if (initialWaypoints.length === 1) {
+        const [lat, lng] = initialWaypoints[0];
+        const sp: RoutePoint = { latitude: lat, longitude: lng, elevation: 0, distance: 0, surface: "asphalt" };
+        setRouteLine([sp]); onRouteUpdate([sp]);
+      }
+    }
+  }, [initialWaypoints]); // only run when initialWaypoints are passed
 
   const handleMapClick = async (lat: number, lng: number) => {
     if (selectedClimb) { setSelectedClimb(null); return; }
@@ -323,51 +352,52 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
       </MapContainer>
 
       {/* ── Top info pill ── */}
-      <div className="absolute top-[72px] right-4 z-10 text-[10px] sm:text-xs text-[#1A1A1A] bg-white/90 px-3 py-1.5 rounded-full backdrop-blur-sm border border-[#EAEAEA] shadow-sm">
-        Haz clic en el mapa para trazar · Puntos: {waypoints.length}
-      </div>
+      {waypoints.length === 0 && (
+        <div className="absolute top-[72px] right-4 z-10 text-[10px] sm:text-xs text-[#1A1A1A] bg-white/90 px-3 py-1.5 rounded-full backdrop-blur-sm border border-[#EAEAEA] shadow-sm pointer-events-none">
+          Haz clic en el mapa para trazar
+        </div>
+      )}
 
       {/* ── Loading ── */}
       {loading && (
-        <div className="absolute top-[108px] right-4 z-10 text-[10px] sm:text-xs text-white bg-[#4A7A30] px-3 py-1.5 rounded-full animate-pulse shadow-md">
+        <div className="absolute top-[72px] right-4 z-10 text-[10px] sm:text-xs text-white bg-[#4A7A30] px-3 py-1.5 rounded-full animate-pulse shadow-md">
           Calculando ruta…
         </div>
       )}
 
       {/* ── Action buttons ── */}
       {waypoints.length > 0 && !loading && (
-        <div className="absolute top-[108px] right-4 z-10 flex gap-2">
+        <div className="absolute top-[72px] right-4 z-10 flex flex-col gap-2">
           {waypoints.length > 1 && (
             <button onClick={handleUndo}
-              className="text-[10px] sm:text-xs bg-white hover:bg-[#F3F0E8] text-[#1A1A1A] px-3 py-1.5 rounded-full transition-colors shadow-sm cursor-pointer border border-[#EAEAEA]"
+              className="bg-white/90 backdrop-blur-sm hover:bg-[#F3F0E8] text-[#1A1A1A] p-2.5 rounded-full transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.08)] cursor-pointer border border-[#EAEAEA] flex items-center justify-center"
               title="Deshacer último punto"
             >
-              ↩ Deshacer
+              <Undo2 className="h-4 w-4 text-[#757575]" />
             </button>
           )}
           <button onClick={handleClear}
-            className="text-[10px] sm:text-xs bg-[#C0392B] hover:bg-[#A93226] text-white px-3 py-1.5 rounded-full transition-colors shadow-sm cursor-pointer"
+            className="bg-white/90 backdrop-blur-sm hover:bg-[#FEE2E2] text-[#C0392B] p-2.5 rounded-full transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.08)] cursor-pointer border border-[#EAEAEA] flex items-center justify-center"
+            title="Borrar Ruta"
           >
-            Borrar Ruta
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       )}
 
       {/* ── Climb list panel ── */}
       {climbs.length > 0 && (
-        <div className="absolute top-[220px] left-4 z-10" style={{ maxWidth: 310 }}>
+        <div className={`absolute top-[72px] left-4 z-10 transition-all ${climbListOpen ? "w-[calc(100vw-32px)] sm:w-[310px] max-w-[310px]" : "w-auto"}`}>
           <div className="bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
             <button
               onClick={() => setClimbListOpen(!climbListOpen)}
-              className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[#F9F7F2] transition-colors cursor-pointer"
+              className={`flex items-center justify-between px-3 py-2.5 hover:bg-[#F9F7F2] transition-colors cursor-pointer gap-2 ${climbListOpen ? "w-full" : ""}`}
             >
               <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase text-[#757575]">
                 <Mountain className="h-3.5 w-3.5 text-[#D96A27]" />
                 Puertos ({climbs.length})
               </span>
-              {climbListOpen
-                ? <ChevronUp className="h-3.5 w-3.5 text-[#757575]" />
-                : <ChevronDown className="h-3.5 w-3.5 text-[#757575]" />}
+              {climbListOpen && <ChevronUp className="h-3.5 w-3.5 text-[#757575]" />}
             </button>
             {climbListOpen && (
               <div className="max-h-[240px] overflow-y-auto">
@@ -411,42 +441,52 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
         </div>
       )}
 
-      {/* ── Fountain count pill ── */}
-      {fountains.length > 0 && (
-        <div className="absolute top-[72px] left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm border border-[#4A7A30]/20 px-3 py-1.5 rounded-full text-[10px] sm:text-xs text-[#4A7A30] shadow-sm font-medium">
-          <Droplets className="h-3.5 w-3.5" />
-          {fountains.length} fuente{fountains.length !== 1 ? "s" : ""}
-        </div>
-      )}
-
       {/* ── Slope + Surface legend ── */}
       {routeLine.length > 1 && (
-        <div className="absolute bottom-4 sm:bottom-6 left-4 z-10 bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl px-3 py-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.05)]" style={{ minWidth: 130 }}>
-          <p className="text-[9px] font-bold tracking-widest uppercase text-[#757575] mb-1.5">Pendiente</p>
-          <div className="flex flex-col gap-[3px]">
-            {SLOPE_LEGEND.map(({ color, label, range }) => (
-              <div key={label} className="flex items-center gap-1.5">
-                <span style={{ background: color }} className="inline-block w-4 h-[3px] rounded-full flex-shrink-0" />
-                <span className="text-[10px] text-[#1A1A1A] leading-none">{label}</span>
-                <span className="text-[9px] text-[#757575] leading-none ml-auto">{range}</span>
+        <div className="absolute bottom-4 sm:bottom-6 left-4 z-10">
+          {!legendOpen ? (
+            <button 
+              onClick={() => setLegendOpen(true)}
+              className="bg-white/90 backdrop-blur-sm hover:bg-[#F9F7F2] text-[#757575] p-2.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#EAEAEA] flex items-center justify-center cursor-pointer transition-colors"
+              title="Mostrar leyenda"
+            >
+              <Info className="h-4 w-4" />
+            </button>
+          ) : (
+            <div className="bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl px-3 py-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.05)] relative" style={{ minWidth: 130 }}>
+              <button 
+                onClick={() => setLegendOpen(false)}
+                className="absolute top-2 right-2 text-[#757575] hover:text-[#1A1A1A] cursor-pointer"
+              >
+                <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+              <p className="text-[9px] font-bold tracking-widest uppercase text-[#757575] mb-1.5 pr-6">Pendiente</p>
+              <div className="flex flex-col gap-[3px]">
+                {SLOPE_LEGEND.map(({ color, label, range }) => (
+                  <div key={label} className="flex items-center gap-1.5">
+                    <span style={{ background: color }} className="inline-block w-4 h-[3px] rounded-full flex-shrink-0" />
+                    <span className="text-[10px] text-[#1A1A1A] leading-none">{label}</span>
+                    <span className="text-[9px] text-[#757575] leading-none ml-auto">{range}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="mt-2 pt-1.5 border-t border-[#EAEAEA]">
-            <p className="text-[9px] font-bold tracking-widest uppercase text-[#757575] mb-1">Firme</p>
-            <div className="flex flex-col gap-[3px]">
-              {[
-                { style: "solid",  label: "Asfalto" },
-                { style: "dashed", label: "Grava" },
-                { style: "dotted", label: "Trail" },
-              ].map(({ style, label }) => (
-                <div key={label} className="flex items-center gap-1.5">
-                  <span style={{ borderBottom:`2px ${style} #757575`, display:"inline-block", width:16 }} />
-                  <span className="text-[10px] text-[#1A1A1A] leading-none">{label}</span>
+              <div className="mt-2 pt-1.5 border-t border-[#EAEAEA]">
+                <p className="text-[9px] font-bold tracking-widest uppercase text-[#757575] mb-1">Firme</p>
+                <div className="flex flex-col gap-[3px]">
+                  {[
+                    { style: "solid",  label: "Asfalto" },
+                    { style: "dashed", label: "Grava" },
+                    { style: "dotted", label: "Trail" },
+                  ].map(({ style, label }) => (
+                    <div key={label} className="flex items-center gap-1.5">
+                      <span style={{ borderBottom:`2px ${style} #757575`, display:"inline-block", width:16 }} />
+                      <span className="text-[10px] text-[#1A1A1A] leading-none">{label}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 

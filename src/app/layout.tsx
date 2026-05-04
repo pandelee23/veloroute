@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="h-full antialiased">
-      <body className={`${inter.className} min-h-full flex flex-col bg-[#F9F7F2] text-[#1A1A1A]`}>
+      <body suppressHydrationWarning className={`${inter.className} min-h-full flex flex-col bg-[#F9F7F2] text-[#1A1A1A]`}>
         <AuthProvider>
           {children}
         </AuthProvider>

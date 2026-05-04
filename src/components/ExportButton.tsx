@@ -39,8 +39,8 @@ export function ExportButton({ routePoints }: ExportButtonProps) {
       disabled={routePoints.length === 0}
       className="bg-[#EAE5D9] hover:bg-[#DDD7C9] text-[#1A1A1A] rounded-[20px] border-0 shadow-sm font-medium text-sm transition-all"
     >
-      <Download className="mr-1.5 h-4 w-4" />
-      Exportar GPX
+      <Download className="sm:mr-1.5 h-4 w-4" />
+      <span className="hidden sm:inline">Exportar GPX</span>
     </Button>
   );
 }

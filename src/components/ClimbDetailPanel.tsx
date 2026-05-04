@@ -135,27 +135,25 @@ export function ClimbDetailPanel({ climb, routePoints, onClose }: ClimbDetailPan
           <p className="text-[9px] font-semibold uppercase tracking-widest text-[#4A7A30] mb-2">Altimetría del puerto</p>
           <div style={{ height: 120 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
-                  <linearGradient id={`colorClimb-${climb.name}`} x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="colorClimbElevation" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor={climb.categoryColor} stopOpacity={0.4} />
-                    <stop offset="100%" stopColor={climb.categoryColor} stopOpacity={0.0} />
+                    <stop offset="95%" stopColor={climb.categoryColor} stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="2 4" stroke="#E1EDDA" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E1EDDA" vertical={false} />
                 <XAxis
                   dataKey="relDist"
-                  tick={{ fill: "#757575", fontSize: 9 }}
+                  tick={{ fill: "#757575", fontSize: 10 }}
                   tickFormatter={v => `${(+v).toFixed(1)}k`}
                   stroke="#E1EDDA"
-                  axisLine={false}
                 />
                 <YAxis
                   domain={yDomain}
-                  tick={{ fill: "#757575", fontSize: 9 }}
+                  tick={{ fill: "#757575", fontSize: 10 }}
                   tickFormatter={v => `${v}m`}
                   stroke="#E1EDDA"
-                  axisLine={false}
                   width={38}
                 />
                 <Tooltip content={<ClimbTooltip />} />
@@ -165,7 +163,7 @@ export function ClimbDetailPanel({ climb, routePoints, onClose }: ClimbDetailPan
                   stroke={climb.categoryColor}
                   strokeWidth={2}
                   fillOpacity={1}
-                  fill={`url(#colorClimb-${climb.name})`}
+                  fill="url(#colorClimbElevation)"
                   dot={false}
                   isAnimationActive={false}
                 />
