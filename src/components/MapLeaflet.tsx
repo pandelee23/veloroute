@@ -535,7 +535,10 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
       )}
 
       <style>{`
-        .leaflet-container { background-color: #FAF8F5; }
+        .leaflet-container { background-color: #FAF8F5 !important; }
+        .leaflet-tile-pane {
+          filter: grayscale(100%) opacity(0.75);
+        }
         .leaflet-tooltip {
           background: white !important;
           border: 1px solid #E1EDDA !important;
