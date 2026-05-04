@@ -174,6 +174,21 @@ function FlyToClimbLayer({ climb, route }: { climb: Climb | null; route: RoutePo
 }
 
 // ─────────────────────────────────────────────────────────────
+// Initial bounds helper (for shared links)
+// ─────────────────────────────────────────────────────────────
+function InitialBoundsLayer({ route, shouldFit, onFitted }: { route: RoutePoint[], shouldFit: boolean, onFitted: () => void }) {
+  const map = useMap();
+  useEffect(() => {
+    if (shouldFit && route && route.length > 1) {
+      const bounds = L.latLngBounds(route.map(p => [p.latitude, p.longitude] as [number, number]));
+      map.fitBounds(bounds, { padding: [60, 60], animate: true, duration: 1.5 });
+      onFitted();
+    }
+  }, [map, route, shouldFit, onFitted]);
+  return null;
+}
+
+// ─────────────────────────────────────────────────────────────
 // Map click handler
 // ─────────────────────────────────────────────────────────────
 function MapEvents({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
@@ -206,6 +221,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
   const [flyToClimb, setFlyToClimb]   = useState<Climb | null>(null);
   const [climbListOpen, setClimbListOpen] = useState(false);
   const [legendOpen, setLegendOpen] = useState(false);
+  const [shouldFitInitial, setShouldFitInitial] = useState(false);
 
   const updateClimbs = useCallback((points: RoutePoint[]) => {
     const detected = detectClimbs(points);
@@ -240,6 +256,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
           if (points) {
             setRouteLine(points); onRouteUpdate(points);
             updateClimbs(points); loadFountains(points);
+            setShouldFitInitial(true); // Flag to fit bounds once
           }
         });
       } else if (initialWaypoints.length === 1) {
@@ -340,6 +357,11 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
         />
         <WaterFountainLayer fountains={fountains} />
         <FlyToClimbLayer climb={flyToClimb} route={routeLine} />
+        <InitialBoundsLayer 
+          route={routeLine} 
+          shouldFit={shouldFitInitial} 
+          onFitted={() => setShouldFitInitial(false)} 
+        />
 
         {/* Chart hover marker */}
         {hoveredPointIndex != null && routeLine[hoveredPointIndex] && (
