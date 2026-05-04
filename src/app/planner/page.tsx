@@ -84,8 +84,8 @@ export default function Home() {
           onWaypointsChange={setWaypoints}
         />
         
-        {/* Panel lateral superpuesto - Toggleable con pestaña lateral */}
-        <div className={`absolute top-4 left-0 z-30 flex items-start transition-transform duration-300 ease-in-out ${showDataPanel ? 'translate-x-4' : '-translate-x-[calc(100%-28px)]'}`}>
+        {/* Panel lateral superpuesto - Toggleable con pestaña lateral (Solo desktop) */}
+        <div className={`hidden md:flex absolute top-4 left-0 z-30 items-start transition-transform duration-300 ease-in-out ${showDataPanel ? 'translate-x-4' : '-translate-x-[calc(100%-28px)]'}`}>
           <div className="flex-shrink-0 relative z-10">
             <DataPanel stats={currentStats} fountains={fountains} />
           </div>
@@ -118,6 +118,7 @@ export default function Home() {
             <ProfileChart 
               routePoints={routePoints} 
               onHover={setHoveredPointIndex}
+              stats={currentStats}
             />
           </div>
         </div>

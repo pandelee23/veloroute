@@ -10,11 +10,13 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
-import { RoutePoint } from "@/types/route";
+import { RoutePoint, RouteStats } from "@/types/route";
+import { Mountain, Clock, Route as RouteIcon, Droplets, Flame } from "lucide-react";
 
 interface ProfileChartProps {
   routePoints: RoutePoint[];
   onHover?: (index: number | null) => void;
+  stats?: RouteStats;
 }
 
 // Custom tooltip for the chart
@@ -32,7 +34,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function ProfileChart({ routePoints, onHover }: ProfileChartProps) {
+export function ProfileChart({ routePoints, onHover, stats }: ProfileChartProps) {
   if (!routePoints || routePoints.length === 0) {
     return (
       <div className="w-full h-48 bg-white flex items-center justify-center text-[#757575] border-t border-[#E1EDDA] flex-shrink-0 z-10">
@@ -47,9 +49,38 @@ export function ProfileChart({ routePoints, onHover }: ProfileChartProps) {
   const yDomain = [Math.max(0, Math.floor(minElev - 50)), Math.ceil(maxElev + 50)];
 
   return (
-    <div className="w-full h-40 sm:h-48 bg-white p-4 border-t border-[#E1EDDA] z-10 flex-shrink-0">
-      <h3 className="text-[#1A1A1A] text-sm font-semibold mb-2">Perfil de Elevación</h3>
-      <div className="w-full h-32">
+    <div className="w-full h-auto bg-white p-4 border-t border-[#E1EDDA] z-10 flex-shrink-0 flex flex-col">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-[#1A1A1A] text-sm font-semibold">Perfil de Elevación</h3>
+      </div>
+      
+      {/* Mobile Compact Stats */}
+      {stats && (
+        <div className="flex md:hidden overflow-x-auto scrollbar-hide items-center gap-6 pb-3 mb-1 border-b border-[#E1EDDA]/50 text-sm">
+            <div className="flex flex-col flex-shrink-0">
+              <span className="text-[10px] text-[#757575] flex items-center"><RouteIcon className="h-3 w-3 mr-1 text-[#6B9E50]" /> Distancia</span>
+              <span className="font-bold text-[#1A1A1A] text-base">{stats.totalDistance.toFixed(1)}<span className="text-[10px] font-normal text-[#757575] ml-0.5">km</span></span>
+            </div>
+            <div className="flex flex-col flex-shrink-0">
+              <span className="text-[10px] text-[#757575] flex items-center"><Mountain className="h-3 w-3 mr-1 text-[#6B9E50]" /> Desnivel</span>
+              <span className="font-bold text-[#1A1A1A] text-base">+{Math.round(stats.elevationGain)}<span className="text-[10px] font-normal text-[#757575] ml-0.5">m</span></span>
+            </div>
+            <div className="flex flex-col flex-shrink-0">
+              <span className="text-[10px] text-[#757575] flex items-center"><Clock className="h-3 w-3 mr-1 text-[#D96A27]" /> Tiempo</span>
+              <span className="font-bold text-[#4A7A30] text-base">{Math.floor(stats.estimatedTime / 60) > 0 ? `${Math.floor(stats.estimatedTime / 60)}h ` : ""}{Math.round(stats.estimatedTime % 60)}m</span>
+            </div>
+            <div className="flex flex-col flex-shrink-0">
+              <span className="text-[10px] text-[#757575] flex items-center"><Droplets className="h-3 w-3 mr-1 text-[#4A7A30]" /> Agua</span>
+              <span className="font-bold text-[#4A7A30] text-base">{((500 + Math.floor(stats.elevationGain / 500) * 100) * (stats.estimatedTime / 60) / 1000).toFixed(1)}<span className="text-[10px] font-normal text-[#757575] ml-0.5">L</span></span>
+            </div>
+            <div className="flex flex-col flex-shrink-0">
+              <span className="text-[10px] text-[#757575] flex items-center"><Flame className="h-3 w-3 mr-1 text-[#D96A27]" /> Energía</span>
+              <span className="font-bold text-[#D96A27] text-base">{Math.round(60 * (stats.estimatedTime / 60))}<span className="text-[10px] font-normal text-[#757575] ml-0.5">g</span></span>
+            </div>
+        </div>
+      )}
+
+      <div className="w-full h-32 sm:h-40">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={routePoints}

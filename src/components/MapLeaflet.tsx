@@ -31,16 +31,27 @@ function RouteGradientLayer({ route }: { route: RoutePoint[] }) {
   useEffect(() => {
     if (!route || route.length < 2) return;
     const fg = L.featureGroup().addTo(map);
+    
+    // Draw a single solid white base line to act as a clean border
+    const coords: [number, number][] = route.map(p => [p.latitude, p.longitude]);
+    L.polyline(coords, { 
+      color: "#FFFFFF", 
+      weight: 7, 
+      opacity: 0.9, 
+      lineCap: "round", 
+      lineJoin: "round" 
+    }).addTo(fg);
+
+    // Draw the colored segments
     for (let i = 0; i < route.length - 1; i++) {
       const p1 = route[i], p2 = route[i + 1];
       const slope = calculateDistanceSmoothedSlope(route, i, 100);
       const color = getSlopeColor(slope);
       const { dashArray, weightBonus } = getSurfaceStyle(p1.surface);
-      const w = 5 + weightBonus;
+      const w = 4.5 + weightBonus;
+      
       L.polyline([[p1.latitude, p1.longitude],[p2.latitude, p2.longitude]],
-        { color: "#FFFFFF", weight: w + 2, opacity: 0.5, lineCap:"round", lineJoin:"round" }).addTo(fg);
-      L.polyline([[p1.latitude, p1.longitude],[p2.latitude, p2.longitude]],
-        { color, weight: w, opacity: 1, lineCap:"round", lineJoin:"round", dashArray }).addTo(fg);
+        { color, weight: w, opacity: 1, lineCap:"butt", lineJoin:"round", dashArray }).addTo(fg);
     }
     return () => { fg.clearLayers(); map.removeLayer(fg); };
   }, [route, map]);
@@ -84,25 +95,24 @@ function ClimbLabelsLayer({
     climbs.forEach((c) => {
       const badge = (hovered: boolean) => `
         <div style="
-          background: ${hovered ? "#FFFFFF" : "#FFFFFFEE"};
-          border: ${hovered ? "2px" : "1.5px"} solid ${c.categoryColor}80;
-          border-radius: 12px; padding: 5px 10px;
-          font-family: 'Inter', system-ui, sans-serif;
-          font-size: 10px; color: #1A1A1A;
-          white-space: nowrap;
-          box-shadow: ${hovered ? `0 4px 16px rgba(0,0,0,0.12)` : "0 2px 8px rgba(0,0,0,0.06)"};
-          line-height: 1.4; cursor: pointer;
-          transform: ${hovered ? "scale(1.05)" : "scale(1)"};
-          transition: all .15s ease;
+          width: 24px;
+          height: 24px;
+          background: ${c.categoryColor};
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: ${hovered ? "0 8px 24px rgba(0,0,0,0.2)" : "0 4px 12px rgba(0,0,0,0.15)"};
+          border: 1.5px solid rgba(255,255,255,0.9);
+          transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          transform: ${hovered ? "scale(1.2) translateY(-2px)" : "scale(1)"};
         ">
-           <span style="font-weight:700;color:${c.categoryColor};font-size:9px;text-transform:uppercase;letter-spacing:.5px">
-            ⛰ ${c.category}
-          </span><br/>
-          <span style="color:#1A1A1A;font-weight:600">${c.name}</span>
-          &nbsp;·&nbsp;${c.lengthKm}km&nbsp;·&nbsp;${c.avgSlopePct}%&nbsp;·&nbsp;<span style="color:#2D4B1D">APM ${c.apm}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 1px;"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
         </div>`;
       const icon = (hovered: boolean) =>
-        L.divIcon({ html: badge(hovered), className: "", iconAnchor: [0, 0] });
+        L.divIcon({ html: badge(hovered), className: "", iconAnchor: [12, 12] });
       const marker = L.marker([c.startLat, c.startLng], { icon: icon(false) }).addTo(map);
       marker.on("mouseover", () => { marker.setIcon(icon(true)); onHover(c); });
       marker.on("mouseout", () => { marker.setIcon(icon(false)); onHover(null); });
@@ -338,17 +348,20 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
         />
         <MapEvents onMapClick={handleMapClick} />
 
-        {/* Waypoint markers */}
-        {waypoints.map((wp, idx) => (
-          <CircleMarker key={idx} center={wp}
-            radius={idx === 0 ? 8 : idx === waypoints.length - 1 ? 8 : 4}
-            pathOptions={{
-              color:"#FFFFFF", weight:2,
-              fillColor: idx === 0 ? "#4A7A30" : idx === waypoints.length - 1 ? "#D96A27" : "#1A1A1A",
-              fillOpacity:1,
-            }}
-          />
-        ))}
+        {/* Waypoint markers (Start and End only) */}
+        {waypoints.map((wp, idx) => {
+          if (waypoints.length > 1 && idx !== 0 && idx !== waypoints.length - 1) return null;
+          return (
+            <CircleMarker key={idx} center={wp}
+              radius={8}
+              pathOptions={{
+                color: "#FFFFFF", weight: 2.5,
+                fillColor: idx === 0 ? "#4A7A30" : "#D96A27",
+                fillOpacity: 1,
+              }}
+            />
+          );
+        })}
 
         <RouteGradientLayer route={routeLine} />
         <ClimbHighlightLayer climb={hoveredClimb} route={routeLine} />
