@@ -13,3 +13,20 @@ export interface RouteStats {
   elevationGain: number; // en metros
   estimatedTime: number; // en minutos
 }
+
+export interface WindData {
+  latitude: number;
+  longitude: number;
+  windSpeed: number; // km/h
+  windDirection: number; // degrees
+}
+
+export interface WindForecast {
+  latitude: number;
+  longitude: number;
+  hourly: {
+    time: string[]; // ISO timestamps
+    windSpeed: number[]; // km/h
+    windDirection: number[]; // degrees
+  };
+}

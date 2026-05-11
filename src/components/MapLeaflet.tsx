@@ -6,13 +6,20 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { RoutePoint } from "@/types/route";
+import { RoutePoint, WindForecast } from "@/types/route";
 import { getOsrmRoute } from "@/services/osrmRouting";
 import { smoothElevations, calculateSlope, getSlopeColor, getSurfaceStyle, calculateDistanceSmoothedSlope } from "@/utils/slope";
 import { detectClimbs, Climb } from "@/utils/climbDetection";
 import { ClimbDetailPanel } from "@/components/ClimbDetailPanel";
 import { fetchDrinkingWaterNearRoute, WaterFountain } from "@/services/overpassService";
-import { Mountain, Droplets, ChevronDown, ChevronUp, Undo2, Trash2, Info } from "lucide-react";
+import { fetchWindForecastForRoute } from "@/services/weatherService";
+import { Mountain, Droplets, ChevronDown, ChevronUp, Undo2, Trash2, Info, Wind, Video } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const DynamicFlyoverModal = dynamic(
+  () => import("@/components/FlyoverModal"),
+  { ssr: false }
+);
 
 interface MapLeafletProps {
   onRouteUpdate: (points: RoutePoint[]) => void;
@@ -169,6 +176,54 @@ function WaterFountainLayer({ fountains }: { fountains: WaterFountain[] }) {
 }
 
 // ─────────────────────────────────────────────────────────────
+// Wind layer
+// ─────────────────────────────────────────────────────────────
+function WindLayer({ forecasts, show, hourIndex }: { forecasts: WindForecast[], show: boolean, hourIndex: number }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!show || !forecasts || forecasts.length === 0) return;
+    const markers: L.Marker[] = [];
+    
+    forecasts.forEach((f) => {
+      // Ensure we have data for this hour index
+      if (!f.hourly.time[hourIndex]) return;
+      
+      const speed = f.hourly.windSpeed[hourIndex];
+      const direction = f.hourly.windDirection[hourIndex];
+      
+      const windSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D4B1D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(${direction}deg);"><path d="M12 2v20M17 7l-5-5-5 5"/></svg>`;
+      
+      const iconHtml = `
+        <div style="
+          background: rgba(255, 255, 255, 0.85); border: 1.5px solid rgba(135, 175, 215, 0.4);
+          border-radius: 50%; width: 32px; height: 32px;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1); backdrop-filter: blur(4px);
+        ">
+          <div style="margin-top: -2px;">${windSvg}</div>
+          <div style="font-size: 8px; font-weight: 800; color: #1A1A1A; margin-top: -4px; background: rgba(255,255,255,0.9); padding: 0 2px; border-radius: 4px;">${Math.round(speed)}</div>
+        </div>`;
+      
+      const icon = L.divIcon({ html: iconHtml, className: "", iconSize: [32, 32], iconAnchor: [16, 16] });
+      const marker = L.marker([f.latitude, f.longitude], { icon }).addTo(map);
+      
+      // Add tooltip showing wind speed and hour
+      const date = new Date(f.hourly.time[hourIndex]);
+      const hourStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      marker.bindTooltip(`${Math.round(speed)} km/h a las ${hourStr}`, {
+        direction: "top",
+        offset: [0, -12],
+        className: "leaflet-tooltip"
+      });
+
+      markers.push(marker);
+    });
+    return () => { markers.forEach(m => map.removeLayer(m)); };
+  }, [forecasts, show, hourIndex, map]);
+  return null;
+}
+
+// ─────────────────────────────────────────────────────────────
 // Fly to climb bounds helper
 // ─────────────────────────────────────────────────────────────
 function FlyToClimbLayer({ climb, route }: { climb: Climb | null; route: RoutePoint[] }) {
@@ -232,6 +287,10 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
   const [climbListOpen, setClimbListOpen] = useState(false);
   const [legendOpen, setLegendOpen] = useState(false);
   const [shouldFitInitial, setShouldFitInitial] = useState(false);
+  const [windForecasts, setWindForecasts] = useState<WindForecast[]>([]);
+  const [showWind, setShowWind] = useState(false);
+  const [windHourIndex, setWindHourIndex] = useState(0);
+  const [showFlyover, setShowFlyover] = useState(false);
 
   const updateClimbs = useCallback((points: RoutePoint[]) => {
     const detected = detectClimbs(points);
@@ -250,6 +309,30 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
     }
   }, [onFountainsLoaded]);
 
+  const loadWindData = useCallback(async (points: RoutePoint[]) => {
+    if (points.length < 2) {
+      setWindForecasts([]);
+      return;
+    }
+    const data = await fetchWindForecastForRoute(points);
+    setWindForecasts(data);
+    
+    // Si hay datos, buscamos la hora actual para establecer el slider al inicio razonable
+    if (data.length > 0 && data[0].hourly.time.length > 0) {
+      const now = new Date();
+      let closestIdx = 0;
+      let minDiff = Infinity;
+      data[0].hourly.time.forEach((tStr, idx) => {
+        const diff = Math.abs(new Date(tStr).getTime() - now.getTime());
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIdx = idx;
+        }
+      });
+      setWindHourIndex(closestIdx);
+    }
+  }, []);
+
   // Report waypoints changes to parent
   useEffect(() => {
     onWaypointsChange?.(waypoints);
@@ -265,7 +348,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
           setLoading(false);
           if (points) {
             setRouteLine(points); onRouteUpdate(points);
-            updateClimbs(points); loadFountains(points);
+            updateClimbs(points); loadFountains(points); loadWindData(points);
             setShouldFitInitial(true); // Flag to fit bounds once
           }
         });
@@ -287,19 +370,20 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
       setLoading(false);
       if (points) {
         setRouteLine(points); onRouteUpdate(points);
-        updateClimbs(points); loadFountains(points);
+        updateClimbs(points); loadFountains(points); loadWindData(points);
       }
     } else if (newWaypoints.length === 1) {
       const sp: RoutePoint = { latitude: lat, longitude: lng, elevation: 0, distance: 0, surface: "asphalt" };
       setRouteLine([sp]); onRouteUpdate([sp]);
       setClimbs([]); onClimbsDetected?.([]);
       setFountains([]); onFountainsLoaded?.([]);
+      setWindForecasts([]);
     }
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setWaypoints([]); setRouteLine([]); setClimbs([]); setFountains([]);
+    setWaypoints([]); setRouteLine([]); setClimbs([]); setFountains([]); setWindForecasts([]);
     setSelectedClimb(null); setHoveredClimb(null); setFlyToClimb(null);
     onRouteUpdate([]); onClimbsDetected?.([]); onFountainsLoaded?.([]);
   };
@@ -310,12 +394,12 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
     const nw = waypoints.slice(0, -1);
     setWaypoints(nw); setSelectedClimb(null);
     if (nw.length === 0) {
-      setRouteLine([]); setClimbs([]); setFountains([]);
+      setRouteLine([]); setClimbs([]); setFountains([]); setWindForecasts([]);
       onRouteUpdate([]); onClimbsDetected?.([]); onFountainsLoaded?.([]);
     } else if (nw.length === 1) {
       const [lat, lng] = nw[0];
       const sp: RoutePoint = { latitude: lat, longitude: lng, elevation: 0, distance: 0, surface: "asphalt" };
-      setRouteLine([sp]); setClimbs([]); setFountains([]);
+      setRouteLine([sp]); setClimbs([]); setFountains([]); setWindForecasts([]);
       onRouteUpdate([sp]); onClimbsDetected?.([]); onFountainsLoaded?.([]);
     } else {
       setLoading(true);
@@ -323,7 +407,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
       setLoading(false);
       if (points) {
         setRouteLine(points); onRouteUpdate(points);
-        updateClimbs(points); loadFountains(points);
+        updateClimbs(points); loadFountains(points); loadWindData(points);
       }
     }
   };
@@ -369,6 +453,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
           onClick={(c) => setSelectedClimb(prev => prev?.name === c.name ? null : c)}
         />
         <WaterFountainLayer fountains={fountains} />
+        <WindLayer forecasts={windForecasts} show={showWind} hourIndex={windHourIndex} />
         <FlyToClimbLayer climb={flyToClimb} route={routeLine} />
         <InitialBoundsLayer 
           route={routeLine} 
@@ -403,6 +488,22 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
       {/* ── Action buttons ── */}
       {waypoints.length > 0 && !loading && (
         <div className="absolute top-[72px] right-4 z-10 flex flex-col gap-2">
+          {routeLine.length > 1 && (
+            <>
+              <button onClick={(e) => { e.stopPropagation(); setShowFlyover(true); }}
+                className="bg-[#4A7A30] hover:bg-[#3D6628] text-white p-2.5 rounded-full transition-colors shadow-[0_4px_12px_rgba(74,122,48,0.3)] cursor-pointer border border-[#4A7A30] flex items-center justify-center"
+                title="Flyover 3D"
+              >
+                <Video className="h-4 w-4" />
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); setShowWind(!showWind); }}
+                className={`backdrop-blur-sm p-2.5 rounded-full transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.08)] cursor-pointer border flex items-center justify-center ${showWind ? 'bg-[#E1EDDA] border-[#4A7A30] text-[#4A7A30]' : 'bg-white/90 border-[#EAEAEA] text-[#757575] hover:bg-[#F9F7F2]'}`}
+                title={showWind ? "Ocultar capa de viento" : "Mostrar capa de viento"}
+              >
+                <Wind className="h-4 w-4" />
+              </button>
+            </>
+          )}
           {waypoints.length > 1 && (
             <button onClick={handleUndo}
               className="bg-white/90 backdrop-blur-sm hover:bg-[#F3F0E8] text-[#1A1A1A] p-2.5 rounded-full transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.08)] cursor-pointer border border-[#EAEAEA] flex items-center justify-center"
@@ -478,11 +579,37 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
 
       {/* ── Slope + Surface legend ── */}
       {routeLine.length > 1 && (
-        <div className="absolute bottom-4 sm:bottom-6 left-4 z-10">
+        <div className="absolute bottom-4 sm:bottom-6 left-4 z-10 flex flex-col gap-2">
+          {/* ── Wind Slider panel ── */}
+          {showWind && windForecasts.length > 0 && windForecasts[0].hourly.time.length > 0 && (
+            <div className="bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl px-4 py-3 shadow-[0_4px_12px_rgba(0,0,0,0.05)] w-[240px]">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[10px] font-bold tracking-widest uppercase text-[#757575] flex items-center gap-1.5">
+                  <Wind className="h-3.5 w-3.5 text-[#4A7A30]" /> Previsión Viento
+                </p>
+                <span className="text-xs font-semibold text-[#1A1A1A]">
+                  {new Date(windForecasts[0].hourly.time[windHourIndex]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              <input 
+                type="range" 
+                min="0" 
+                max={windForecasts[0].hourly.time.length - 1} 
+                value={windHourIndex} 
+                onChange={(e) => setWindHourIndex(parseInt(e.target.value))}
+                className="w-full h-1.5 bg-[#EAEAEA] rounded-lg appearance-none cursor-pointer accent-[#4A7A30]"
+              />
+              <div className="flex justify-between mt-1 px-0.5">
+                <span className="text-[9px] text-[#757575]">Hoy</span>
+                <span className="text-[9px] text-[#757575]">+72h</span>
+              </div>
+            </div>
+          )}
+
           {!legendOpen ? (
             <button 
               onClick={() => setLegendOpen(true)}
-              className="bg-white/90 backdrop-blur-sm hover:bg-[#F9F7F2] text-[#757575] p-2.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#EAEAEA] flex items-center justify-center cursor-pointer transition-colors"
+              className="bg-white/90 backdrop-blur-sm hover:bg-[#F9F7F2] text-[#757575] p-2.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#EAEAEA] flex items-center justify-center cursor-pointer transition-colors w-max"
               title="Mostrar leyenda"
             >
               <Info className="h-4 w-4" />
@@ -531,6 +658,14 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
           climb={selectedClimb}
           routePoints={routeLine}
           onClose={() => setSelectedClimb(null)}
+        />
+      )}
+
+      {/* ── Flyover 3D modal ── */}
+      {showFlyover && routeLine.length > 1 && (
+        <DynamicFlyoverModal
+          routePoints={routeLine}
+          onClose={() => setShowFlyover(false)}
         />
       )}
 
