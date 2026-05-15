@@ -3,6 +3,9 @@
 import React, { useMemo } from "react";
 import { Download, Trash2, MoreHorizontal, TrendingUp, TrendingDown, Clock, MapPin } from "lucide-react";
 
+import { encodeWaypoints } from "@/lib/shareUrl";
+import { useRouter } from "next/navigation";
+
 // ─── Types ───────────────────────────────────────────────────
 export interface SavedRouteData {
   id: string;
@@ -125,11 +128,29 @@ function MiniMap({ coordinates }: { coordinates: [number, number][] }) {
 
 // ─── Route Card ──────────────────────────────────────────────
 export function RouteCard({ route, onDelete, onExportGPX }: RouteCardProps) {
+  const router = useRouter();
   const difficulty = getDifficulty(route.total_distance, route.elevation_gain);
   const [showMenu, setShowMenu] = React.useState(false);
 
+  const handleCardClick = () => {
+    if (!route.geojson?.coordinates || route.geojson.coordinates.length < 2) return;
+    
+    const coords = route.geojson.coordinates;
+    // Sample down to max 25 waypoints to pass to ORS via the planner
+    const maxWaypoints = 25;
+    const step = Math.max(1, Math.floor(coords.length / (maxWaypoints - 1)));
+    
+    const sampledCoords = coords.filter((_, i) => i % step === 0 || i === coords.length - 1);
+    
+    // coords are [lng, lat], encodeWaypoints expects [lat, lng]
+    const waypoints: [number, number][] = sampledCoords.map(c => [c[1], c[0]]);
+    
+    const r = encodeWaypoints(waypoints);
+    router.push(`/planner?r=${r}`);
+  };
+
   return (
-    <div className="route-card">
+    <div className="route-card cursor-pointer hover:bg-[#F3F0E8] transition-colors" onClick={handleCardClick}>
       {/* Thumbnail */}
       <MiniMap coordinates={route.geojson?.coordinates || []} />
 
@@ -175,10 +196,10 @@ export function RouteCard({ route, onDelete, onExportGPX }: RouteCardProps) {
       </div>
 
       {/* Actions */}
-      <div className="route-card__actions">
+      <div className="route-card__actions" onClick={(e) => e.stopPropagation()}>
         <button
           className="route-card__action-btn"
-          onClick={() => onExportGPX(route)}
+          onClick={(e) => { e.stopPropagation(); onExportGPX(route); }}
           title="Descargar GPX"
         >
           <Download className="w-[18px] h-[18px]" />
@@ -186,18 +207,18 @@ export function RouteCard({ route, onDelete, onExportGPX }: RouteCardProps) {
         <div className="route-card__action-menu-wrapper">
           <button
             className="route-card__action-btn"
-            onClick={() => setShowMenu(!showMenu)}
+            onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
             title="Más opciones"
           >
             <MoreHorizontal className="w-[18px] h-[18px]" />
           </button>
           {showMenu && (
             <>
-              <div className="route-card__backdrop" onClick={() => setShowMenu(false)} />
+              <div className="route-card__backdrop" onClick={(e) => { e.stopPropagation(); setShowMenu(false); }} />
               <div className="route-card__dropdown">
                 <button
                   className="route-card__dropdown-item route-card__dropdown-item--danger"
-                  onClick={() => { onDelete(route.id); setShowMenu(false); }}
+                  onClick={(e) => { e.stopPropagation(); onDelete(route.id); setShowMenu(false); }}
                 >
                   <Trash2 className="w-4 h-4" />
                   Eliminar ruta
