@@ -39,41 +39,41 @@ export default function RegisterPage() {
 
   if (confirmed) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#F9F7F2] to-white flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-[#F9F9F7] flex flex-col items-center justify-center px-4">
         <div className="text-center">
-          <CheckCircle2 className="w-16 h-16 text-[#4A7A30] mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">¡Cuenta creada!</h2>
-          <p className="text-[#757575]">Redirigiendo a tu perfil...</p>
+          <CheckCircle2 className="w-16 h-16 text-[#1b2b24] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-[#1a1c1b] mb-2">¡Cuenta creada!</h2>
+          <p className="text-[#424845]">Redirigiendo a tu perfil...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F9F7F2] to-white flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-[#F9F9F7] flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link href="/" className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 rounded-full bg-[#4A7A30] flex items-center justify-center shadow-md mb-3">
+          <div className="w-14 h-14 rounded bg-[#1b2b24] flex items-center justify-center shadow-[4px_4px_0px_#c2c8c3] mb-3">
             <Navigation2 className="h-7 w-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-[#1A1A1A] tracking-tight">VeloRoute Pro</h1>
+          <h1 className="text-2xl font-bold text-[#1a1c1b] tracking-tight">VeloRoute Pro</h1>
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-[#EAEAEA] p-8">
-          <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">Crear cuenta</h2>
-          <p className="text-[#757575] text-sm mb-6">Gratis y sin tarjeta de crédito</p>
+        <div className="bg-[#F9F9F7] rounded border border-[#c2c8c3] p-8 shadow-[4px_4px_0px_#e2e3e1]">
+          <h2 className="text-2xl font-bold text-[#1a1c1b] mb-2">Crear cuenta</h2>
+          <p className="text-[#424845] text-sm mb-6">Gratis y sin tarjeta de crédito</p>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">
+            <div className="bg-[#ffdad6] border border-[#ba1a1a]/20 text-[#ba1a1a] text-sm rounded px-4 py-3 mb-5">
               {error}
             </div>
           )}
 
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#1A1A1A] mb-1.5">
+              <label htmlFor="email" className="label-caps text-[#1a1c1b] mb-1.5 block">
                 Correo electrónico
               </label>
               <input
@@ -83,12 +83,12 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="tu@correo.com"
-                className="w-full px-4 py-2.5 rounded-lg border border-[#EAEAEA] bg-[#FAF8F5] text-[#1A1A1A] text-sm focus:outline-none focus:ring-2 focus:ring-[#4A7A30] focus:border-transparent transition-all placeholder:text-[#BDBDBD]"
+                className="w-full px-4 py-2.5 rounded border border-[#c2c8c3] bg-transparent text-[#1a1c1b] text-sm focus:outline-none focus:border-[#cd4800] focus:ring-1 focus:ring-[#cd4800] transition-all placeholder:text-[#737874]"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#1A1A1A] mb-1.5">
+              <label htmlFor="password" className="label-caps text-[#1a1c1b] mb-1.5 block">
                 Contraseña
               </label>
               <div className="relative">
@@ -99,39 +99,39 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="Mínimo 6 caracteres"
-                  className="w-full px-4 py-2.5 pr-10 rounded-lg border border-[#EAEAEA] bg-[#F9F7F2] text-[#1A1A1A] text-sm focus:outline-none focus:ring-2 focus:ring-[#4A7A30] focus:border-transparent transition-all placeholder:text-[#BDBDBD]"
+                  className="w-full px-4 py-2.5 pr-10 rounded border border-[#c2c8c3] bg-transparent text-[#1a1c1b] text-sm focus:outline-none focus:border-[#cd4800] focus:ring-1 focus:ring-[#cd4800] transition-all placeholder:text-[#737874]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#BDBDBD] hover:text-[#757575]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#737874] hover:text-[#424845]"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-xs text-[#BDBDBD] mt-1">Mínimo 6 caracteres</p>
+              <p className="text-xs text-[#737874] mt-1">Mínimo 6 caracteres</p>
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#4A7A30] hover:bg-[#3A6025] text-white rounded-full py-2.5 mt-2 font-medium transition-all"
+              className="w-full bg-[#cd4800] hover:bg-[#a33800] text-white rounded py-2.5 mt-2 font-medium transition-all"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               {loading ? "Creando cuenta..." : "Crear cuenta"}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-[#757575] mt-6">
+          <p className="text-center text-sm text-[#424845] mt-6">
             ¿Ya tienes cuenta?{" "}
-            <Link href="/login" className="text-[#4A7A30] font-medium hover:underline">
+            <Link href="/login" className="text-[#1b2b24] font-medium hover:underline">
               Iniciar sesión
             </Link>
           </p>
         </div>
 
-        <p className="text-center text-sm text-[#BDBDBD] mt-6">
-          <Link href="/" className="hover:text-[#757575] transition-colors">
+        <p className="text-center text-sm text-[#737874] mt-6">
+          <Link href="/" className="hover:text-[#424845] transition-colors">
             ← Volver al inicio
           </Link>
         </p>

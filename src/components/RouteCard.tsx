@@ -47,9 +47,9 @@ function formatDate(iso: string | null) {
 function getDifficulty(distanceKm: number, elevationGain: number) {
   // Simple heuristic based on distance and elevation
   const score = distanceKm * 0.5 + elevationGain * 0.01;
-  if (score < 10) return { label: "Fácil", color: "#4A7A30", bg: "#F2F7EE" };
-  if (score < 25) return { label: "Moderado", color: "#6B9E50", bg: "#F2F7EE" };
-  return { label: "Difícil", color: "#D96A27", bg: "#FFF4ED" };
+  if (score < 10) return { label: "Fácil", color: "#1b2b24", bg: "#d4e7dc" };
+  if (score < 25) return { label: "Moderado", color: "#3a4a42", bg: "#d4e7dc" };
+  return { label: "Difícil", color: "#cd4800", bg: "#ffdbce" };
 }
 
 // ─── Mini‑map SVG ────────────────────────────────────────────
@@ -93,7 +93,7 @@ function MiniMap({ coordinates }: { coordinates: [number, number][] }) {
   if (!coordinates || coordinates.length < 2) {
     return (
       <div className="route-card__thumbnail route-card__thumbnail--empty">
-        <MapPin className="w-6 h-6 text-[#BDBDBD]" />
+        <MapPin className="w-6 h-6 text-[#737874]" />
       </div>
     );
   }
@@ -104,7 +104,7 @@ function MiniMap({ coordinates }: { coordinates: [number, number][] }) {
         <path
           d={pathD}
           fill="none"
-          stroke="#4A7A30"
+          stroke="#1b2b24"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -114,8 +114,8 @@ function MiniMap({ coordinates }: { coordinates: [number, number][] }) {
           cx={pathD.match(/^M([\d.]+),([\d.]+)/)?.[1] || 0}
           cy={pathD.match(/^M([\d.]+),([\d.]+)/)?.[2] || 0}
           r="3.5"
-          fill="#4A7A30"
-          stroke="white"
+          fill="#cd4800"
+          stroke="#F9F9F7"
           strokeWidth="1.5"
         />
       </svg>

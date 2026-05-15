@@ -172,8 +172,8 @@ ${trackPoints}
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F9F7F2]">
-        <Loader2 className="w-8 h-8 text-[#4A7A30] animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#F9F9F7]">
+        <Loader2 className="w-8 h-8 text-[#1b2b24] animate-spin" />
       </div>
     );
   }
@@ -181,19 +181,19 @@ ${trackPoints}
   if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F9F7F2]">
+    <div className="min-h-screen flex flex-col bg-[#F9F9F7]">
       <Navbar />
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-10">
         {/* ── Header ──────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1a1c1b] tracking-tight">
               Rutas guardadas
             </h1>
           </div>
           <Link href="/planner">
-            <Button className="bg-[#D96A27] hover:bg-[#C55E20] text-white rounded-full px-4 sm:px-5 py-2 sm:py-2.5 font-semibold text-xs sm:text-sm shadow-sm">
+            <Button className="bg-[#cd4800] hover:bg-[#a33800] text-white rounded px-4 sm:px-5 py-2 sm:py-2.5 font-semibold text-xs sm:text-sm shadow-sm">
               <Plus className="w-4 h-4 mr-1 sm:mr-1.5" />
               <span className="hidden sm:inline">Nueva ruta</span>
               <span className="sm:hidden">Nueva</span>
@@ -201,28 +201,28 @@ ${trackPoints}
           </Link>
         </div>
 
-        <p className="text-[#757575] text-sm mb-6">
+        <p className="text-[#424845] text-sm mb-6 font-stats">
           {routes.length} {routes.length === 1 ? "Tour" : "Tours"}
         </p>
 
         {/* ── Quick stats strip ───────────────────────────── */}
         {routes.length > 0 && (
           <div className="flex items-center gap-6 mb-6 text-sm overflow-x-auto pb-2 scrollbar-hide">
-            <span className="flex items-center gap-1.5 text-[#757575] shrink-0">
-              <Route className="w-4 h-4 text-[#4A7A30]" />
-              <strong className="text-[#1A1A1A]">{routes.length}</strong> rutas
+            <span className="flex items-center gap-1.5 text-[#424845] shrink-0">
+              <Route className="w-4 h-4 text-[#1b2b24]" />
+              <strong className="text-[#1a1c1b] font-stats">{routes.length}</strong> rutas
             </span>
-            <span className="flex items-center gap-1.5 text-[#757575] shrink-0">
-              <Map className="w-4 h-4 text-[#4A7A30]" />
-              <strong className="text-[#1A1A1A]">{formatDistance(totalDist)}</strong>
+            <span className="flex items-center gap-1.5 text-[#424845] shrink-0">
+              <Map className="w-4 h-4 text-[#1b2b24]" />
+              <strong className="text-[#1a1c1b] font-stats">{formatDistance(totalDist)}</strong>
             </span>
-            <span className="flex items-center gap-1.5 text-[#757575] shrink-0">
-              <TrendingUp className="w-4 h-4 text-[#4A7A30]" />
-              <strong className="text-[#1A1A1A]">{totalElev.toFixed(0)} m</strong>
+            <span className="flex items-center gap-1.5 text-[#424845] shrink-0">
+              <TrendingUp className="w-4 h-4 text-[#1b2b24]" />
+              <strong className="text-[#1a1c1b] font-stats">{totalElev.toFixed(0)} m</strong>
             </span>
-            <span className="flex items-center gap-1.5 text-[#757575] shrink-0">
-              <Clock className="w-4 h-4 text-[#4A7A30]" />
-              <strong className="text-[#1A1A1A]">{formatTime(totalTime)}</strong>
+            <span className="flex items-center gap-1.5 text-[#424845] shrink-0">
+              <Clock className="w-4 h-4 text-[#1b2b24]" />
+              <strong className="text-[#1a1c1b] font-stats">{formatTime(totalTime)}</strong>
             </span>
           </div>
         )}
@@ -266,20 +266,20 @@ ${trackPoints}
         {/* ── Route list ──────────────────────────────────── */}
         {loadingRoutes ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="w-7 h-7 text-[#4A7A30] animate-spin" />
+            <Loader2 className="w-7 h-7 text-[#1b2b24] animate-spin" />
           </div>
         ) : filtered.length === 0 && routes.length === 0 ? (
           <div className="route-list">
             <div className="profile-empty">
               <div className="profile-empty__icon">
-                <Map className="w-7 h-7 text-[#BDBDBD]" />
+                <Map className="w-7 h-7 text-[#737874]" />
               </div>
               <p className="profile-empty__title">No tienes rutas guardadas aún</p>
               <p className="profile-empty__text">
                 Crea tu primera ruta en el planificador y guárdala aquí.
               </p>
               <Link href="/planner">
-                <Button className="bg-[#4A7A30] hover:bg-[#3A6025] text-white rounded-full">
+                <Button className="bg-[#1b2b24] hover:bg-[#3a4a42] text-white rounded">
                   Ir al planificador
                 </Button>
               </Link>
@@ -289,7 +289,7 @@ ${trackPoints}
           <div className="route-list">
             <div className="profile-empty">
               <div className="profile-empty__icon">
-                <Search className="w-6 h-6 text-[#BDBDBD]" />
+                <Search className="w-6 h-6 text-[#737874]" />
               </div>
               <p className="profile-empty__title">Sin resultados</p>
               <p className="profile-empty__text">

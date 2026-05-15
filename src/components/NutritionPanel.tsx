@@ -57,37 +57,37 @@ export function NutritionPanel({ stats, fountains, totalDistance }: NutritionPan
   }
 
   return (
-    <div className="mt-4 pt-3 border-t border-[#EAEAEA]">
-      <p className="text-[10px] font-bold tracking-widest uppercase text-[#757575] mb-3 flex items-center gap-1.5">
-        <Flame className="h-3 w-3 text-[#D96A27]" />
+    <div className="mt-4 pt-3 border-t border-[#c2c8c3]">
+      <p className="label-caps text-[#424845] mb-3 flex items-center gap-1.5">
+        <Flame className="h-3 w-3 text-[#cd4800]" />
         Plan de Avituallamiento
       </p>
 
       <div className="grid grid-cols-2 gap-3">
         {/* Water */}
         <div className="flex flex-col space-y-0.5">
-          <span className="text-[10px] text-[#757575] flex items-center gap-1">
-            <Droplets className="h-3 w-3 text-[#4A7A30]" /> Agua
+          <span className="label-caps text-[#424845] flex items-center gap-1" style={{ fontSize: '10px' }}>
+            <Droplets className="h-3 w-3 text-[#1b2b24]" /> Agua
           </span>
-          <span className="text-lg font-bold text-[#4A7A30]">
+          <span className="text-lg font-bold text-[#1b2b24] font-stats">
             {totalWaterL}{" "}
-            <span className="text-xs font-normal text-[#757575]">L</span>
+            <span className="text-xs font-normal text-[#424845]">L</span>
           </span>
-          <span className="text-[9px] text-[#757575]">
+          <span className="text-[9px] text-[#737874] font-stats">
             {mlPerHour} ml/h
           </span>
         </div>
 
         {/* Energy */}
         <div className="flex flex-col space-y-0.5">
-          <span className="text-[10px] text-[#757575] flex items-center gap-1">
-            <Flame className="h-3 w-3 text-[#D96A27]" /> Energía
+          <span className="label-caps text-[#424845] flex items-center gap-1" style={{ fontSize: '10px' }}>
+            <Flame className="h-3 w-3 text-[#cd4800]" /> Energía
           </span>
-          <span className="text-lg font-bold text-[#D96A27]">
+          <span className="text-lg font-bold text-[#cd4800] font-stats">
             {totalCarbs}{" "}
-            <span className="text-xs font-normal text-[#757575]">g</span>
+            <span className="text-xs font-normal text-[#424845]">g</span>
           </span>
-          <span className="text-[9px] text-[#757575]">
+          <span className="text-[9px] text-[#737874] font-stats">
             60 g carbs/h
           </span>
         </div>
@@ -95,7 +95,7 @@ export function NutritionPanel({ stats, fountains, totalDistance }: NutritionPan
 
       {/* Fountain count */}
       {fountains.length > 0 && (
-        <p className="text-[10px] text-[#757575] mt-2">
+        <p className="text-[10px] text-[#424845] mt-2 font-stats">
           💧 {fountains.length} fuente{fountains.length !== 1 ? "s" : ""} detectada{fountains.length !== 1 ? "s" : ""} en la ruta
         </p>
       )}
@@ -106,10 +106,10 @@ export function NutritionPanel({ stats, fountains, totalDistance }: NutritionPan
           {gaps.map((g, i) => (
             <div
               key={i}
-              className="flex items-start gap-1.5 bg-[#D96A27]/8 border border-[#D96A27]/20 rounded-xl px-2 py-1.5"
+              className="flex items-start gap-1.5 bg-[#cd4800]/8 border border-[#cd4800]/20 rounded px-2 py-1.5"
             >
-              <AlertTriangle className="h-3 w-3 text-[#D96A27] flex-shrink-0 mt-0.5" />
-              <span className="text-[10px] text-[#D96A27] leading-tight">
+              <AlertTriangle className="h-3 w-3 text-[#cd4800] flex-shrink-0 mt-0.5" />
+              <span className="text-[10px] text-[#cd4800] leading-tight font-stats">
                 <strong>{g.gap} km</strong> sin fuentes (km {g.from.toFixed(1)} → {g.to.toFixed(1)})
               </span>
             </div>

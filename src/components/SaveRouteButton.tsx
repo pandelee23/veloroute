@@ -61,10 +61,10 @@ export function SaveRouteButton({ routePoints, stats }: SaveRouteButtonProps) {
     <Button
       onClick={handleSave}
       disabled={routePoints.length < 2 || saving || success}
-      className={`rounded-[9999px] shadow-sm font-medium text-sm transition-all border-0 ${
+      className={`rounded shadow-sm font-medium text-sm transition-all border-0 ${
         success
-          ? 'bg-[#4A7A30] hover:bg-[#3A6025] text-white'
-          : 'bg-[#4A7A30] hover:bg-[#3A6025] text-white'
+          ? 'bg-[#1b2b24] hover:bg-[#3a4a42] text-white'
+          : 'bg-[#cd4800] hover:bg-[#a33800] text-white'
       }`}
     >
       {saving ? (

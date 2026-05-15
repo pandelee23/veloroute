@@ -1,5 +1,5 @@
 /* ═════════════════════════════════════════════════════════════
-   Profile page — Komoot-inspired route list
+   Profile page — Technical Topography design system
    ═════════════════════════════════════════════════════════════ */
 
 /* ── Search bar ────────────────────────────────────────────── */
@@ -12,26 +12,26 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #757575;
+  color: #424845;
   pointer-events: none;
 }
 .profile-search__input {
   width: 100%;
   padding: 14px 16px 14px 44px;
-  border: 1.5px solid #EAEAEA;
-  border-radius: 12px;
-  background: #fff;
+  border: 1px solid #c2c8c3;
+  border-radius: 4px;
+  background: #F9F9F7;
   font-size: 15px;
-  color: #1A1A1A;
+  color: #1a1c1b;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .profile-search__input::placeholder {
-  color: #BDBDBD;
+  color: #737874;
 }
 .profile-search__input:focus {
-  border-color: var(--color-green-500);
-  box-shadow: 0 0 0 3px rgba(74, 122, 48, 0.08);
+  border-color: #cd4800;
+  box-shadow: 0 0 0 3px rgba(205, 72, 0, 0.08);
 }
 
 /* ── Filter pills ──────────────────────────────────────────── */
@@ -46,33 +46,32 @@
 .profile-filters::-webkit-scrollbar {
   display: none;
 }
-.profile-filters {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
 .profile-filter {
   white-space: nowrap;
   padding: 7px 16px;
-  border-radius: 20px;
-  border: 1.5px solid #EAEAEA;
-  background: #fff;
-  font-size: 13px;
+  border-radius: 4px;
+  border: 1px solid #c2c8c3;
+  background: #F9F9F7;
+  font-size: 12px;
   font-weight: 500;
-  color: #1A1A1A;
+  color: #1a1c1b;
   cursor: pointer;
   transition: all 0.15s ease;
   display: flex;
   align-items: center;
   gap: 5px;
+  font-family: var(--font-jetbrains-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 .profile-filter:hover {
-  background: #F9F7F2;
-  border-color: #D1D1D1;
+  background: #eeeeec;
+  border-color: #737874;
 }
 .profile-filter--active {
-  background: var(--color-green-100);
-  border-color: var(--color-green-300);
-  color: var(--color-green-700);
+  background: #1b2b24;
+  border-color: #1b2b24;
+  color: #ffffff;
 }
 
 /* ── Route card ────────────────────────────────────────────── */
@@ -81,22 +80,22 @@
   align-items: center;
   gap: 20px;
   padding: 18px 20px 18px 18px;
-  background: #fff;
-  border-bottom: 1px solid #F0EFEA;
+  background: #F9F9F7;
+  border-bottom: 0.5px solid #c2c8c3;
   transition: background 0.15s ease;
 }
 .route-card:first-child {
-  border-radius: 14px 14px 0 0;
+  border-radius: 4px 4px 0 0;
 }
 .route-card:last-child {
   border-bottom: none;
-  border-radius: 0 0 14px 14px;
+  border-radius: 0 0 4px 4px;
 }
 .route-card:only-child {
-  border-radius: 14px;
+  border-radius: 4px;
 }
 .route-card:hover {
-  background: #FDFCF9;
+  background: #f4f4f2;
 }
 
 /* ── Mini‑map thumbnail ────────────────────────────────────── */
@@ -104,15 +103,15 @@
   flex-shrink: 0;
   width: 120px;
   height: 90px;
-  border-radius: 10px;
+  border-radius: 4px;
   overflow: hidden;
-  background: #F3F0E8;
+  background: #eeeeec;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .route-card__thumbnail--empty {
-  background: #F3F0E8;
+  background: #eeeeec;
 }
 .route-card__minimap-svg {
   width: 100%;
@@ -131,16 +130,18 @@
   border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   line-height: 1.6;
   border: 1px solid transparent;
   margin-bottom: 4px;
+  font-family: var(--font-jetbrains-mono), monospace;
 }
 
 .route-card__name {
   font-size: 15px;
   font-weight: 600;
-  color: #1A1A1A;
+  color: #1a1c1b;
   line-height: 1.35;
   margin: 0 0 6px 0;
   white-space: nowrap;
@@ -154,10 +155,11 @@
   gap: 6px;
   flex-wrap: wrap;
   font-size: 13px;
-  color: var(--color-green-500);
+  color: #1b2b24;
   font-weight: 500;
   line-height: 1;
   margin-bottom: 4px;
+  font-family: var(--font-jetbrains-mono), monospace;
 }
 
 .route-card__stat {
@@ -169,13 +171,13 @@
   font-weight: 600;
 }
 .route-card__stat-sep {
-  color: #D1D1D1;
+  color: #c2c8c3;
   font-weight: 300;
 }
 
 .route-card__date {
   font-size: 12px;
-  color: #757575;
+  color: #424845;
   margin: 0;
   line-height: 1.4;
 }
@@ -192,9 +194,9 @@
   width: 36px;
   height: 36px;
   border: none;
-  border-radius: 50%;
+  border-radius: 4px;
   background: transparent;
-  color: #BDBDBD;
+  color: #737874;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -202,8 +204,8 @@
   transition: all 0.15s ease;
 }
 .route-card__action-btn:hover {
-  background: #F3F0E8;
-  color: #1A1A1A;
+  background: #eeeeec;
+  color: #1a1c1b;
 }
 
 /* ── Dropdown menu ─────────────────────────────────────────── */
@@ -220,10 +222,10 @@
   right: 0;
   top: 100%;
   margin-top: 4px;
-  background: #fff;
-  border: 1px solid #EAEAEA;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  background: #F9F9F7;
+  border: 1px solid #c2c8c3;
+  border-radius: 4px;
+  box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);
   z-index: 50;
   min-width: 160px;
   overflow: hidden;
@@ -239,7 +241,7 @@
   border: none;
   background: none;
   font-size: 13px;
-  color: #1A1A1A;
+  color: #1a1c1b;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -248,43 +250,46 @@
   text-align: left;
 }
 .route-card__dropdown-item:hover {
-  background: #F9F7F2;
+  background: #eeeeec;
 }
 .route-card__dropdown-item--danger {
-  color: #C0392B;
+  color: #ba1a1a;
 }
 .route-card__dropdown-item--danger:hover {
-  background: #FFF0EF;
+  background: #ffdad6;
 }
 
 /* ── Route list wrapper ────────────────────────────────────── */
 .route-list {
-  border: 1.5px solid #EAEAEA;
-  border-radius: 14px;
+  border: 1px solid #c2c8c3;
+  border-radius: 4px;
   overflow: hidden;
-  background: #fff;
+  background: #F9F9F7;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 /* ── Sort select ───────────────────────────────────────────── */
 .profile-sort-select {
   padding: 7px 30px 7px 12px;
-  border-radius: 20px;
-  border: 1.5px solid #EAEAEA;
-  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 10px center;
-  font-size: 13px;
+  border-radius: 4px;
+  border: 1px solid #c2c8c3;
+  background: #F9F9F7 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23424845' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 10px center;
+  font-size: 12px;
   font-weight: 500;
-  color: #1A1A1A;
+  color: #1a1c1b;
   cursor: pointer;
   outline: none;
   appearance: none;
   transition: border-color 0.15s ease;
+  font-family: var(--font-jetbrains-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 .profile-sort-select:hover {
-  border-color: #D1D1D1;
+  border-color: #737874;
 }
 .profile-sort-select:focus {
-  border-color: var(--color-green-500);
+  border-color: #cd4800;
 }
 
 /* ── Empty state ───────────────────────────────────────────── */
@@ -298,8 +303,8 @@
 .profile-empty__icon {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
-  background: #F3F0E8;
+  border-radius: 4px;
+  background: #eeeeec;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -308,12 +313,12 @@
 .profile-empty__title {
   font-size: 18px;
   font-weight: 600;
-  color: #1A1A1A;
+  color: #1a1c1b;
   margin: 0 0 6px 0;
 }
 .profile-empty__text {
   font-size: 14px;
-  color: #757575;
+  color: #424845;
   margin: 0 0 24px 0;
 }
 
@@ -333,11 +338,11 @@
     position: absolute;
     top: 24px;
     right: 24px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(249, 249, 247, 0.8);
     backdrop-filter: blur(4px);
-    border-radius: 20px;
+    border-radius: 4px;
     padding: 2px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.1);
   }
   .route-card {
     position: relative;

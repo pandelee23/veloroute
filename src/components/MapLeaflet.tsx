@@ -427,8 +427,8 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
         zoomControl={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='Maps &copy; <a href="https://www.thunderforest.com">Thunderforest</a>, Data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url={`https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=${process.env.NEXT_PUBLIC_THUNDERFOREST_API_KEY}`}
         />
         <MapEvents onMapClick={handleMapClick} />
 
@@ -672,7 +672,7 @@ export default function MapLeaflet({ onRouteUpdate, onClimbsDetected, onFountain
       <style>{`
         .leaflet-container { background-color: #FAF8F5 !important; }
         .leaflet-tile-pane {
-          filter: grayscale(100%) opacity(0.75);
+          filter: saturate(0.6) opacity(0.85);
         }
         .leaflet-tooltip {
           background: white !important;

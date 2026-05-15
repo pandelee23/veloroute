@@ -57,11 +57,11 @@ export function ShareButton({ waypoints }: ShareButtonProps) {
         variant="outline"
         size="sm"
         onClick={handleCopy}
-        className="bg-white hover:bg-[#F9F7F2] text-[#4A7A30] border-[#E1EDDA] h-9 px-3 transition-all font-medium text-xs rounded-full shadow-sm"
+        className="bg-[#F9F9F7] hover:bg-[#eeeeec] text-[#1b2b24] border-[#c2c8c3] h-9 px-3 transition-all font-medium text-xs rounded shadow-sm"
         disabled={waypoints.length < 2}
       >
         {copied ? (
-          <Check className="h-4 w-4 mr-1.5 text-green-600" />
+          <Check className="h-4 w-4 mr-1.5 text-[#1b2b24]" />
         ) : (
           <Link2 className="h-4 w-4 mr-1.5" />
         )}
@@ -72,7 +72,7 @@ export function ShareButton({ waypoints }: ShareButtonProps) {
         variant="outline"
         size="icon"
         onClick={handleWhatsAppShare}
-        className="bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border-transparent h-9 w-9 transition-all rounded-full shadow-sm"
+        className="bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border-transparent h-9 w-9 transition-all rounded shadow-sm"
         disabled={waypoints.length < 2}
         title="Enviar por WhatsApp"
       >

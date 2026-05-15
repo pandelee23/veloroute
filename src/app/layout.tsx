@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/Auth/AuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+});
 
 export const metadata: Metadata = {
   title: "VeloRoute Pro — Planificador de Rutas Ciclistas",
@@ -17,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="h-full antialiased">
-      <body suppressHydrationWarning className={`${inter.className} min-h-full flex flex-col bg-[#F9F7F2] text-[#1A1A1A]`}>
+      <body suppressHydrationWarning className={`${geist.variable} ${jetbrainsMono.variable} font-[family-name:var(--font-geist)] min-h-full flex flex-col bg-[#F9F9F7] text-[#1a1c1b]`}>
         <AuthProvider>
           {children}
         </AuthProvider>

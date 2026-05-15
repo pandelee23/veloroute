@@ -39,20 +39,20 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
   return (
     <div ref={menuRef} className="relative">
       {/* ─── Main bar ─── */}
-      <nav className="w-full px-4 sm:px-5 py-3 sm:py-4 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-[#1A1A1A]/5 sticky top-0 z-50">
+      <nav className="w-full px-4 sm:px-5 py-3 sm:py-4 flex justify-between items-center bg-[#F9F9F7]/80 backdrop-blur-[12px] border-b border-[#c2c8c3]/40 sticky top-0 z-50">
         {/* Logo — always visible */}
         <Link href="/" className="flex items-center space-x-2 shrink-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#4A7A30] flex items-center justify-center shadow-sm">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded bg-[#1b2b24] flex items-center justify-center shadow-sm">
             <Navigation2 className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-white" />
           </div>
-          <h1 className="text-[#1A1A1A] font-bold text-base sm:text-lg tracking-tight leading-none">
+          <h1 className="text-[#1a1c1b] font-bold text-base sm:text-lg tracking-tight leading-none">
             VeloRoute
           </h1>
         </Link>
 
         {/* ─── Desktop actions (sm+) ─── */}
         <div className="hidden sm:flex items-center space-x-3">
-          <Link href="/planner" className="text-sm font-medium text-[#4A7A30] hover:text-[#3A6025] transition-colors whitespace-nowrap">
+          <Link href="/planner" className="label-caps text-[#1b2b24] hover:text-[#3a4a42] transition-colors whitespace-nowrap">
             Planificador
           </Link>
           {children}
@@ -60,12 +60,12 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
             user ? (
               <div className="flex items-center space-x-2">
                 <Link href="/profile">
-                  <Button variant="ghost" size="sm" className="text-[#757575] hover:text-[#1A1A1A] px-3">
+                  <Button variant="ghost" size="sm" className="text-[#424845] hover:text-[#1a1c1b] px-3">
                     <UserIcon className="w-4 h-4 mr-2" />
                     Perfil
                   </Button>
                 </Link>
-                <Button variant="outline" size="sm" onClick={handleLogout} className="text-[#757575] border-[#EAEAEA] hover:bg-[#EAEAEA] px-3">
+                <Button variant="outline" size="sm" onClick={handleLogout} className="text-[#424845] border-[#c2c8c3] hover:bg-[#eeeeec] px-3 rounded">
                   <LogOut className="w-4 h-4 mr-2" />
                   Salir
                 </Button>
@@ -73,12 +73,12 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
             ) : (
               <div className="flex items-center space-x-2">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-[#757575] hover:text-[#1A1A1A] px-3">
+                  <Button variant="ghost" size="sm" className="text-[#424845] hover:text-[#1a1c1b] px-3">
                     Entrar
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm" className="bg-[#4A7A30] hover:bg-[#3A6025] text-white rounded-full px-4 text-sm">
+                  <Button size="sm" className="bg-[#cd4800] hover:bg-[#a33800] text-white rounded px-4 text-sm font-medium">
                     Registrarse
                   </Button>
                 </Link>
@@ -89,7 +89,7 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
 
         {/* ─── Mobile hamburger (< sm) ─── */}
         <button
-          className="sm:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-[#F2F7EE] text-[#4A7A30] active:scale-95 transition-all"
+          className="sm:hidden flex items-center justify-center w-9 h-9 rounded bg-[#eeeeec] text-[#1b2b24] active:scale-95 transition-all"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
         >
@@ -99,7 +99,7 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
 
       {/* ─── Mobile dropdown panel ─── */}
       <div
-        className={`sm:hidden absolute top-full left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-[#E1EDDA] shadow-lg overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+        className={`sm:hidden absolute top-full left-0 right-0 z-50 bg-[#F9F9F7]/95 backdrop-blur-xl border-b border-[#c2c8c3]/40 shadow-lg overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] ${
           mobileOpen
             ? "max-h-[400px] opacity-100"
             : "max-h-0 opacity-0 pointer-events-none"
@@ -108,8 +108,8 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
         <div className="px-5 py-4 space-y-3">
           {/* Action buttons row — route actions passed as children */}
           {children && (
-            <div className="pb-3 border-b border-[#E1EDDA]/60">
-              <p className="text-[10px] font-semibold tracking-widest text-[#BDBDBD] uppercase mb-2.5">Acciones de ruta</p>
+            <div className="pb-3 border-b border-[#c2c8c3]/30">
+              <p className="label-caps text-[#737874] mb-2.5">Acciones de ruta</p>
               <div className="flex items-center gap-2 flex-wrap">
                 {children}
               </div>
@@ -121,9 +121,9 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
             <Link
               href="/planner"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#1A1A1A] hover:bg-[#F2F7EE] transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 rounded text-[#1a1c1b] hover:bg-[#eeeeec] transition-colors"
             >
-              <MapPin className="w-4 h-4 text-[#4A7A30]" />
+              <MapPin className="w-4 h-4 text-[#1b2b24]" />
               <span className="text-sm font-medium">Planificador</span>
             </Link>
 
@@ -133,14 +133,14 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
                   <Link
                     href="/profile"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#1A1A1A] hover:bg-[#F2F7EE] transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded text-[#1a1c1b] hover:bg-[#eeeeec] transition-colors"
                   >
-                    <UserIcon className="w-4 h-4 text-[#4A7A30]" />
+                    <UserIcon className="w-4 h-4 text-[#1b2b24]" />
                     <span className="text-sm font-medium">Mi perfil</span>
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#757575] hover:bg-[#FEF2F2] hover:text-[#C0392B] transition-colors w-full"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded text-[#424845] hover:bg-[#ffdad6] hover:text-[#ba1a1a] transition-colors w-full"
                   >
                     <LogOut className="w-4 h-4" />
                     <span className="text-sm font-medium">Cerrar sesión</span>
@@ -149,13 +149,13 @@ export function Navbar({ children }: { children?: React.ReactNode }) {
               ) : (
                 <div className="flex gap-2 pt-1">
                   <Link href="/login" onClick={() => setMobileOpen(false)} className="flex-1">
-                    <Button variant="outline" className="w-full text-[#4A7A30] border-[#E1EDDA] hover:bg-[#F2F7EE] rounded-xl h-10 text-sm font-medium">
+                    <Button variant="outline" className="w-full text-[#1b2b24] border-[#c2c8c3] hover:bg-[#eeeeec] rounded h-10 text-sm font-medium">
                       <LogIn className="w-4 h-4 mr-2" />
                       Entrar
                     </Button>
                   </Link>
                   <Link href="/register" onClick={() => setMobileOpen(false)} className="flex-1">
-                    <Button className="w-full bg-[#4A7A30] hover:bg-[#3A6025] text-white rounded-xl h-10 text-sm font-medium">
+                    <Button className="w-full bg-[#cd4800] hover:bg-[#a33800] text-white rounded h-10 text-sm font-medium">
                       <UserPlus className="w-4 h-4 mr-2" />
                       Registrarse
                     </Button>

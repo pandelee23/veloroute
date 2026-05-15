@@ -17,7 +17,7 @@ import { useEffect } from "react";
 // Dynamic import with SSR disabled is required for React-Leaflet
 const DynamicMapLeaflet = dynamic(
   () => import("@/components/MapLeaflet"),
-  { ssr: false, loading: () => <div className="w-full h-full bg-[#F9F7F2] flex items-center justify-center text-[#757575]">Cargando Mapa...</div> }
+  { ssr: false, loading: () => <div className="w-full h-full bg-[#F9F9F7] flex items-center justify-center text-[#424845]">Cargando Mapa...</div> }
 );
 
 export default function Home() {
@@ -61,7 +61,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-[#F9F7F2] overflow-hidden relative font-sans">
+    <main className="flex min-h-screen flex-col bg-[#F9F9F7] overflow-hidden relative font-[family-name:var(--font-geist)]">
       {/* Navbar compartido con auth */}
       <div className="relative z-20">
         <Navbar>
@@ -91,7 +91,7 @@ export default function Home() {
           </div>
           <button 
             onClick={() => setShowDataPanel(!showDataPanel)}
-            className="bg-white/95 backdrop-blur-sm flex items-center justify-center w-11 h-14 shadow-[4px_4px_12px_rgba(0,0,0,0.08)] border border-l-0 border-[#E1EDDA] text-[#4A7A30] hover:bg-[#F9F7F2] transition-colors mt-8 rounded-r-2xl cursor-pointer -ml-4 z-0 pl-3"
+            className="bg-[#F9F9F7]/95 backdrop-blur-sm flex items-center justify-center w-11 h-14 shadow-[4px_4px_12px_rgba(0,0,0,0.08)] border border-l-0 border-[#c2c8c3] text-[#1b2b24] hover:bg-[#eeeeec] transition-colors mt-8 rounded-r cursor-pointer -ml-4 z-0 pl-3"
             title={showDataPanel ? "Ocultar estadísticas" : "Mostrar estadísticas"}
           >
             <div className={`transition-transform duration-300 ${showDataPanel ? 'rotate-180' : 'rotate-0'}`}>
@@ -105,7 +105,7 @@ export default function Home() {
       <div className="relative z-20 flex flex-col items-center">
         <button 
           onClick={() => setShowProfile(!showProfile)}
-          className="absolute -top-8 bg-white/95 backdrop-blur-sm border border-b-0 border-[#E1EDDA] text-[#4A7A30] w-16 h-8 rounded-t-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.05)] flex items-center justify-center hover:bg-[#F9F7F2] transition-colors cursor-pointer z-30"
+          className="absolute -top-8 bg-[#F9F9F7]/95 backdrop-blur-sm border border-b-0 border-[#c2c8c3] text-[#1b2b24] w-16 h-8 rounded-t shadow-[0_-4px_12px_rgba(0,0,0,0.05)] flex items-center justify-center hover:bg-[#eeeeec] transition-colors cursor-pointer z-30"
           title={showProfile ? "Ocultar perfil" : "Mostrar perfil"}
         >
           <div className={`transition-transform duration-300 ${showProfile ? 'rotate-180' : 'rotate-0'}`}>
